@@ -411,7 +411,7 @@ if ( ! class_exists( 'class_list' ) ) {
 
 					$posts_array[$i]->class_meta[$ii]["product"] = $this->get_product($p->ID, $event["woo_product"]);
 
-					$posts_array[$i]->class_meta[$ii]["event"] = ($event["postponed"]) ? "postponed" : $this->get_event($event["event"]);
+					$posts_array[$i]->class_meta[$ii]["event"] = $this->get_event($event["event"]);
 
 				}
 
