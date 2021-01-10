@@ -122,8 +122,14 @@ function child_manage_woocommerce_styles() {
 
  }
 
-
 add_filter('excerpt_more', 'new_excerpt_more');
 
-
-
+/**
+ * @snippet       Programmatically Complete Paid WooCommerce Orders
+ */
+ 
+add_filter( 'woocommerce_payment_complete_order_status', 'bbloomer_autocomplete_processing_orders', 9999 );
+ 
+function bbloomer_autocomplete_processing_orders() {
+   return 'completed';
+}
