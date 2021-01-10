@@ -1,0 +1,3 @@
+@mixin bg($img, $attributes : no-repeat center center, $repeat: no-repeat) {
+	background: url(#{$images}#{$img}) $attributes $repeat;
+}

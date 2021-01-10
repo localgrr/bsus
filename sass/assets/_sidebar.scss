@@ -1,0 +1,10 @@
+.widget {
+	.widget-title {
+		margin-bottom: 20px;
+	}
+
+	.bss-upcoming-classes-item {
+		@extend .losenge;
+		margin-bottom: 20px;
+	}
+}

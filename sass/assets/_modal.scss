@@ -1,0 +1,15 @@
+.modal-body {
+	padding: 20px 40px;
+
+	.acf-field-repeater  {
+		padding: 0;
+		position: absolute !important;
+		height: 1px;
+		visibility: hidden;
+		width: 1px;
+	}
+
+	.acf-button {
+		margin-top: 10px;
+	}
+}       

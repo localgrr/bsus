@@ -1,0 +1,92 @@
+.navbar {
+	margin-bottom: 20px;
+	padding: 0;
+
+	.navbar-brand {
+		padding: 10px 0 0;
+		position: relative;
+		z-index: 1;
+
+		&.custom-logo-link {
+			//background: url(/wp-content/uploads/2020/11/bss-logo-round.png) no-repeat left bottom;
+			background: url(/wp-content/uploads/2018/01/bss-logo.png) no-repeat left bottom;
+			display: block;
+			height: 150px;
+			left: -106px;
+			position: relative;
+			width: 500px;
+
+
+			@include media-breakpoint-down(sm) {
+				background-size: contain;
+				left: 0;
+			}
+		}
+		
+		img {
+			display: none;
+			max-width: 300px;
+		}
+	}
+
+	&.cart-is-empty {
+		#menu-item-96, #menu-item-97 {
+			display: none;
+		}
+	}
+
+	.mc4wp-form {
+		display: none;
+		max-width: 300px;
+
+		p { 
+			color: #fff;
+			font-size: $font-size-sm;
+		}
+  
+		.form-group, .mc4wp-response p {
+			margin-bottom: 0;  
+		}
+
+		.mc4wp-response p {
+			margin-left: 15px;  
+		}
+	}
+
+	#navbarNavDropdown { 
+		z-index: 10;
+		position: absolute;
+		right: 20px;
+		bottom: 10px;
+
+		@include media-breakpoint-down(sm) {
+			background: #000;
+			position: static;
+		}
+	}
+  
+	@include media-breakpoint-down(md) {
+		.container {
+			display: block;
+			text-align: center;
+
+			.mc4wp-form {
+				max-width: 100%;
+				width: 100%;
+			}
+
+			.navbar-toggler {
+				position: absolute;
+				right: 20px;
+				top: 20px;
+				z-index: 10;
+			}
+		}
+	}
+}
+
+.entry-header {
+	.entry-title {
+		margin-bottom: 20px;
+	}
+}

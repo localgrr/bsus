@@ -1,0 +1,41 @@
+.post {
+	.entry-meta {
+		display: none;
+	}
+
+	.entry-content {
+		line-height: 1.7;
+	}
+
+	figure.graf {
+		text-align: center;
+	}
+
+	img {
+		display: block;
+		margin-left: auto !important;
+		margin-right: auto !important;
+	}
+
+	.imageCaption {
+		text-align: center;
+	}
+
+
+}
+
+.archive {
+
+	.post {
+		.wp-post-image {
+			float: left;
+			margin-right: 20px;
+			max-width: 250px;
+		}
+
+		.entry-footer {
+			display: none;
+		}
+	}
+
+}

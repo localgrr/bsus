@@ -1,0 +1,40 @@
+#single-wrapper {
+
+	.wp-post-image {
+		margin-bottom: 20px;
+	}
+
+	.event-times {
+
+		.event-times-list, .event-times-list-item {
+			list-style-type: none;
+			margin: 0;
+			padding: 0;
+		}
+
+	}
+
+	.event-times .event-times-list, .event-venue {
+		padding-bottom: 20px;
+	} 
+
+	.class-item {
+		border: 2px solid #eee;
+		border-radius: 10px;
+		margin-bottom: 20px;
+		padding: 5px 20px 20px;
+
+		.btn {
+			margin-top: 20px;
+		}
+
+		.location {
+			margin-top: 20px;
+		}
+
+		h2, h3 {
+			@extend .h4;
+		}
+	}
+
+}  

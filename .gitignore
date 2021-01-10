@@ -1,3 +1,4 @@
 js/third-party/*
 stripe/*
 prepros.config
+wp-config.php

@@ -1,0 +1,61 @@
+.class-grid-header {
+	@extend .fancy;
+	color: $mid-grey;
+	margin: 30px 0 20px;
+} 
+
+.class-grid-column-header {
+	margin-bottom: 20px;
+}
+
+.active-only .class-grid .class-grid-item {
+	width: 48%; 
+}
+
+.class-grid {
+
+	.class-grid-item {
+
+		@extend .losenge;
+		margin-bottom: 25px;
+
+		.blurb, .wp-post-image {
+			margin-bottom: 20px;
+		}
+
+		.blurb, .event-meta {
+			font-size: $font-size-sm;
+		}
+
+		.class-grid-item-heading {
+			@extend .h4; 
+		}
+
+		.thumbnail-container {
+			padding-right: 5px;
+		} 
+
+		.text-container {
+			padding-left: 5px;
+		} 
+
+		.event-meta {
+ 
+			border-top: 3px solid $light-grey;
+			padding-top: 20px;
+
+			.event-meta-heading {
+				@extend .h5
+			}
+
+			.btn {
+				margin-bottom: 20px;
+			}
+
+			.sold-out {
+				text-decoration: line-through;
+			}
+
+		}
+	}
+}

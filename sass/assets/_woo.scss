@@ -1,0 +1,39 @@
+.quick_buy_container {
+	display: inline-block;   
+}
+
+.quantity-container {
+	&, .quantity, label, .form-control {
+		display: inline-block;
+		vertical-align: middle; 
+	}
+
+	.form-control {
+		font-size: 12px;
+		width: 60px;
+	}
+}   
+ 
+.simple-woo-add-form {
+	@extend .losenge;
+}  
+
+.woocommerce form .form-row-last, .woocommerce-page form .form-row-last {
+	float: none;
+}
+
+.woocommerce, .woocommerce-page {
+	form {
+		.form-row-last {
+			float: none;
+		}
+
+		.woocommerce-billing-fields {
+			h3 {
+				display: none;
+			}
+		}
+	}
+}
+
+//woocommerce-billing-fields
