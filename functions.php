@@ -24,17 +24,13 @@ require get_template_directory() . '/inc/enqueue.php';
 
 show_admin_bar( false );
 
-
-
-
-
 include "inc/bss_functions.php";
 include "inc/class_list.php";
 include "inc/single_class.php";
 include "inc/waiting_list.php";
+include "inc/student_registers.php";
 
 $bss_functions = new bss_functions();
-
 
 if (!function_exists('write_log')) {
 

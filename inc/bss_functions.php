@@ -1,4 +1,5 @@
 <?php
+
 if ( ! class_exists( 'bss_functions' ) ) {
 
 	class bss_functions {
@@ -24,6 +25,10 @@ if ( ! class_exists( 'bss_functions' ) ) {
 			$this->waiting_list = new waiting_list();
 
 			add_shortcode( 'waiting_list_admin', array( $this->waiting_list, 'waiting_list_admin' ) ); 
+
+			$this->student_registers = new student_registers();
+
+			add_shortcode( 'student_registers', array( $this->student_registers, 'student_registers' ) ); 
 
 		}
 
