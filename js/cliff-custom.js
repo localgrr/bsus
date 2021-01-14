@@ -129,7 +129,7 @@ function orders_table_check_changes() {
 
         $(".orders-table-toolbar .grand-total").val(total);
 
-        if(total > 0) vatTotal = (total - ((19 / total) * 100 )).toFixed(2);
+        if(total > 0) vatTotal = (total - (total * 0.19)).toFixed(2);
 
         $(".orders-table-toolbar .grand-total-minus-vat").val(vatTotal);
 
