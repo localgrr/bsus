@@ -6,6 +6,7 @@
  * & woocommperce rest api 
  * @link https://woocommerce.github.io/woocommerce-rest-api-docs
  */
+
 require $_SERVER['DOCUMENT_ROOT'] . '/vendor/autoload.php';
 
 use Automattic\WooCommerce\Client;
@@ -23,10 +24,29 @@ if ( ! class_exists( 'student_registers' ) ) {
 
 		public function __construct() {
 
+
+			if( $_SERVER['SERVER_NAME'] == "bsus.local") {
+
+				$server = "http://bsus.local";
+				$key = WOO_LOCAL_KEY;
+				$secret = WOO_LOCAL_SECRET;
+
+			} else {
+
+				$server = "https://berlinstandupschool.com";
+				$key = WOO_LIVE_KEY;
+				$secret = WOO_LIVE_SECRET;
+
+			}
+			//
+			// - srcret
+
+			//echo $_SERVER['SERVER_NAME'];
+
 			$this->woo = new Client(
-			    'http://' . $_SERVER['SERVER_NAME'], 
-			    'ck_5f590088d80ecba5af7e2331471637283e829c51', // Your consumer key FIXME move these
-			    'cs_b5aac4821bc0c6da174fd246a5872f77fbbd2cd2', // Your consumer secret
+			    $server,
+			    $key, 
+			    $secret,
 			    [
 			        'wp_api' => true, // Enable the WP REST API integration
 			        'version' => 'wc/v3' // WooCommerce WP REST API version
