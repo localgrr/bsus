@@ -1,99 +1,63 @@
 <?php
 
-/*
- * this require includes PhpSpreadsheet
- * @link https://phpspreadsheet.readthedocs.io/en/latest/
- * & woocommperce rest api 
- * @link https://woocommerce.github.io/woocommerce-rest-api-docs
- */
-
-require $_SERVER['DOCUMENT_ROOT'] . '/vendor/autoload.php';
-
-use Automattic\WooCommerce\Client;
-
 if ( ! class_exists( 'student_registers' ) ) {
 
 
 	class student_registers {
 
-		private $woo;
-
-		private $product_array;
-
-		private $orders_array;
+		private $products_array;
 
 		public function __construct() {
 
-
-			if( $_SERVER['SERVER_NAME'] == "bsus.local") {
-
-				$server = "http://bsus.local";
-				$key = WOO_LOCAL_KEY;
-				$secret = WOO_LOCAL_SECRET;
-
-			} else {
-
-				$server = "https://berlinstandupschool.com";
-				$key = WOO_LIVE_KEY;
-				$secret = WOO_LIVE_SECRET;
-
-			}
-			//
-			// - srcret
-
-			//echo $_SERVER['SERVER_NAME'];
-
-			$this->woo = new Client(
-			    $server,
-			    $key, 
-			    $secret,
-			    [
-			        'wp_api' => true, // Enable the WP REST API integration
-			        'version' => 'wc/v3' // WooCommerce WP REST API version
-			    ]
-			);
-
-
 		}
 
-		private function get_all_woo($endpoint, $attributes = [], $pages = 10) {
+		/**
+		 * Get All orders IDs for a given product ID.
+		 *
+		 * @param  integer  $product_id (required)
+		 * @param  array    $order_status (optional) Default is 'wc-completed'
+		 *
+		 * @return array
+		 */
 
-			$attr = array_merge($attributes, ['page' => 1]);
+		private function get_orders_ids_by_product_id( $product_id ) {
 
-			$woo = $this->woo;
+		    global $wpdb;
 
-			$arr = $woo->get($endpoint, $attr );
+		    $results = $wpdb->get_col("
+		        SELECT order_items.order_id
+		        FROM {$wpdb->prefix}woocommerce_order_items as order_items
+		        LEFT JOIN {$wpdb->prefix}woocommerce_order_itemmeta as order_item_meta ON order_items.order_item_id = order_item_meta.order_item_id
+		        LEFT JOIN {$wpdb->posts} AS posts ON order_items.order_id = posts.ID
+		        WHERE posts.post_type = 'shop_order'
+		        AND order_items.order_item_type = 'line_item'
+		        AND order_item_meta.meta_key = '_product_id'
+		        AND order_item_meta.meta_value = '$product_id'
+		    ");
 
-			$i = 2;
+		    return $results;
+		}
 
-			while ($i < $pages) {
+		private function get_products() {
 
-				$attr = array_merge($attributes, ['page' => $i]);
-				
-				$item = $woo->get($endpoint, $attr );
+			$query = new WC_Product_Query( array(
+			    'limit' => -1,
+			    'orderby' => 'date',
+			    'order' => 'DESC',
+			    'status' => 'publish'
+			) );
 
-				if(count($item) == 0) break;
-
-				$arr = array_merge($arr, $item);
-
-				$i++;
-			}
-
-			return $arr;
+			return $query->get_products();
 
 		}
 
 		public function student_registers() {
 
-			
+			$pid = $_GET["pid"];
 
-			$this->product_array = $this->get_all_woo("products", ['status' => 'publish']);
-
-			$this->orders_array = $this->get_all_woo("orders");
+			$this->products_array = $this->get_products();
 
 			$this->print_product_select();
-
-			$pid = $_GET["pid"];
 
 			if(isset($pid)) {
 
@@ -101,26 +65,14 @@ if ( ! class_exists( 'student_registers' ) ) {
 
 			}
 
-
 		}
 
-		private function print_orders_table($pid) {
-
-			
-
-			foreach ($this->product_array as $pr) {
-				
-				if($pr->id == $pid) {
-
-					$orders = $this->get_orders_by_pid($pid);
-
-				}
-
-			}
+		private function print_orders_table_html($orders, $product) {
 
 			$ht = '<table class="student-register" width="100%" border="1" cellpadding="3">
 			<thead><tr>
 				<th>Order ID</th>
+				<th>Order status</th>
 				<th>Date</th>
 				<th>Email</th>
 				<th>Name</th>
@@ -128,86 +80,100 @@ if ( ! class_exists( 'student_registers' ) ) {
 				<th>Address 2</th>
 				<th>City</th>
 				<th>Postcode</th>
+				<th>Country</th>
 				<th>SKU</th>
-				<th>Total</th>
-				<th>Quantity</th>
+				<th>Total</th> 
+				<th>Fees</th> 
 				<th>Payment method</th>
 				<th>Customer note</th>
 			</tr></thead>
 			<tbody>
 			';
 
-			foreach ($orders["orders"] as $order) {
+			foreach ($orders as $order) {
+
+				$total_price = ($product->get_price() - $order->get_total_discount(false));
+				$country = $order->get_billing_country();
+				$method = $order->get_payment_method();
 				
 				$ht .= '<tr>
-					<td>' . $order["order_id"] . '</td>
-					<td>' . $order["date"] . '</td>
-					<td>' . $order["customer"]->email . '</td>
-					<td>' . $order["customer"]->first_name . ' ' . $order["customer"]->last_name . '</td>
-					<td>' . $order["customer"]->address_1 . '</td>
-					<td>' . $order["customer"]->address_2 . '</td>
-					<td>' . $order["customer"]->city . '</td>
-					<td>' . $order["customer"]->postcode . '</td>
-					<td>' . $order["sku"] . '</td>
-					<td>' . $order["total"] . '</td>
-					<td>' . $order["quantity"] . '</td>
-					<td>' . $order["payment_method"] . '</td>
-					<td>' . $order["customer_note"] . '</td>
+					<td>' . $order->get_id() . '</td>
+					<td>' . $order->get_status() . '</td>
+					<td>' . date('d/m/Y', strtotime($order->get_date_created())) . '</td>
+					<td>' . $order->get_billing_email() . '</td>
+					<td>' . $order->get_billing_first_name() . ' ' . $order->get_billing_last_name() . '</td>
+					<td>' . $order->get_billing_address_1() . '</td>
+					<td>' . $order->get_billing_address_2() . '</td>
+					<td>' . $order->get_billing_city() . '</td>
+					<td>' . $order->get_billing_postcode() . '</td>
+					<td>' . $country . '</td>
+					<td>' . $product->get_sku(). '</td>
+					<td>' . $total_price . '</td>
+					<td>' . $this->get_stripe_fees($total_price, $country, $method) . '</td>
+					<td>' . $method . '</td>
+					<td>' . $order->get_customer_note() . '</td>
 
 				</tr>';
 			}
 
 			$ht .= '</tbody></table>';
 
-			echo $ht;
-
+			return $ht;
 		}
 
-		private function get_orders_by_pid($pid) {
+		private function print_orders_table($pid) {
+
+			$order_ids = $this->get_orders_ids_by_product_id($pid);
+
+			$product = wc_get_product($pid);
 
 			$orders = [];
 			$orders_cancelled = [];
-
-			foreach ($this->orders_array as $order) {
-				
-				foreach ($order->line_items as $line_item) {
 			
-					if($line_item->product_id == $pid) {
+			foreach ($order_ids as $id) {
 
-						$arr = [
+				$order = wc_get_order( $id );
 
-							//'product_id' => 	$pid,
-							'order_id' => 		$order->id,
-							'quantity' => 		$line_item->quantity,
-							'sku' => 			$line_item->sku,
-							'date' =>			date('d/m/Y', strtotime($order->date_created)),
-							'total' =>			$order->total,
-							'customer' => 		$order->billing,
-							'customer_note' =>	$order->customer_note,
-							'payment_method' =>	$order->payment_method
+				if( ($order->get_status() == "cancelled") || ($order->get_status() == "refund-requested")) {
 
-						];
+					array_push($orders_cancelled, $order);
 
-						if($order->status == "cancelled") { 
 
-							array_push($orders_cancelled, $arr);
+				} else {
 
-						} else {
+					array_push($orders, $order);
 
-							array_push($orders, $arr);
-
-						}
-
-					}
 
 				}
 
 			}
 
-			return [
-				'orders' => $orders,
-				'cancelled' => $orders_cancelled
-			];
+			$ht = $this->print_orders_table_html($orders, $product);
+
+			if(count($orders_cancelled)>0) {
+
+				$ht .= "<h4>Cancelled orders</h4>";
+				$ht .= $this->print_orders_table_html($orders_cancelled, $product);
+
+			}
+
+			echo $ht;
+
+		}
+
+		private function get_stripe_fees($price, $country, $method) {
+
+			if(strpos($method, "stripe") === false) return 0;
+
+			$add = 0.25;
+			$eu_percent = 1.4;
+			$other_percent = 2.9;
+
+			$eu_arr = array( 'AT', 'BE', 'BG', 'CY', 'CZ', 'DE', 'DK', 'EE', 'ES', 'FI', 'FR', 'GR', 'HU', 'HR', 'IE', 'IT', 'LT', 'LU', 'LV', 'MT', 'NL', 'PL', 'PT', 'RO', 'SE', 'SI', 'SK' );
+
+			$percent = (in_array($country, $eu_arr)) ? $eu_percent : $other_percent;
+
+			return round($price * ($percent / 100),2) + $add;
 
 		}
 
@@ -219,11 +185,11 @@ if ( ! class_exists( 'student_registers' ) ) {
 			<select id="product_dropdown" name="product_dropdown" onchange="document.location.href = \'?pid=\' + this.value" autocomplete="off">
 				<option> -- </option>';
 
-			foreach ($this->product_array as $pr) {
+			foreach ($this->products_array as $pr) {
 
 				$selected = ($pid == $pr->id) ? ' selected="selected"' : '';
 				
-				$ht .= '<option value="' . $pr->id . '"' . $selected . '>' . $pr->name . '</option>';
+				$ht .= '<option value="' . $pr->get_id() . '"' . $selected . '>' . $pr->get_name() . '</option>';
 
 			}
 
