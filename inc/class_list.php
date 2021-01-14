@@ -24,7 +24,7 @@ if ( ! class_exists( 'class_list' ) ) {
 
 		public function check_notices() {
 
-			if($_GET["updated"] == "true") echo $this->alert("You have been added to the waiting list", "info");
+			if(isset($_GET["updated"])) if($_GET["updated"] == "true") echo $this->alert("You have been added to the waiting list", "info");
 
 		}
 
@@ -239,7 +239,7 @@ if ( ! class_exists( 'class_list' ) ) {
 
 			$wl = new waiting_list();
 
-			if($class_meta["event"]["date"]["past"]) {
+			if(isset($class_meta["event"]["date"]["past"])) if($class_meta["event"]["date"]["past"]) {
 
 				return $this->enquiry_button($class, 'Past event. Enquire about future classes', 'secondary');
 			}
@@ -407,9 +407,9 @@ if ( ! class_exists( 'class_list' ) ) {
 
 				$posts_array[$i]->hide_class = $hide_class;
 
-				foreach ($class_events as $ii => $event) {
+				if($class_events) foreach ($class_events as $ii => $event) {
 
-					$posts_array[$i]->class_meta[$ii]["product"] = $this->get_product($p->ID, $event["woo_product"]);
+					$posts_array[$i]->class_meta[$ii]["product"] = $this->get_product($event["woo_product"], $p->ID);
 
 					$posts_array[$i]->class_meta[$ii]["event"] = $this->get_event($event["event"]);
 
@@ -433,19 +433,19 @@ if ( ! class_exists( 'class_list' ) ) {
 
 			$pf = new WC_Product_Factory(); 
 
-			$woo = $pf->get_product($class_id, $product_id);
+			$product = $pf->get_product( $product_id );
 
 			$arr = [
 
-				'product_id' => $woo->id,
-				'price' => $woo->price,
-				'stock_quantity' => $woo->stock_quantity
+				'product_id' => $product->get_id(),
+				'price' => $product->get_price(),
+				'stock_quantity' => $product->get_stock_quantity()
 
 			];
 
 			$arr["nearly_sold_out"] = bss_functions::is_nearly_sold_out($arr, $product_id);
 
-			$arr["waiting_list"] = waiting_list::get_waiting_list($woo->id);
+			$arr["waiting_list"] = waiting_list::get_waiting_list($product_id);
 
 
 			return $arr;

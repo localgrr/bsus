@@ -116,7 +116,7 @@ if ( ! class_exists( 'bss_functions' ) ) {
 		 * @return str
 		 */
 
-		public function human_date($date, $format = "D M j, Y H:i") {
+		static function human_date($date, $format = "D M j, Y H:i") {
 
 			if(!$date) return false;
 
