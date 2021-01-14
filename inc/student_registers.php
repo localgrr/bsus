@@ -69,38 +69,42 @@ if ( ! class_exists( 'student_registers' ) ) {
 
 		private function print_orders_table_html($orders, $product) {
 
-			$ht = '<table class="student-register" width="100%" border="1" cellpadding="3">
+			$ht = '<table class="student-register-table" width="100%" border="1" cellpadding="3">
 			<thead><tr>
+				<th class="narrow"><label><input type="checkbox" class="all"> All</label></th>
 				<th>Order ID</th>
 				<th>Order status</th>
 				<th>Date</th>
-				<th>Email</th>
-				<th>Name</th>
-				<th>Address</th>
+				<th class="wide">Email</th>
+				<th class="wide">Name</th>
+				<th class="wide">Address</th>
 				<th>Address 2</th>
 				<th>City</th>
 				<th>Postcode</th>
 				<th>Country</th>
 				<th>SKU</th>
 				<th>Total</th> 
-				<th>Fees</th> 
+				<th>Stripe fees</th> 
 				<th>Payment method</th>
 				<th>Customer note</th>
 			</tr></thead>
 			<tbody>
 			';
 
-			foreach ($orders as $order) {
+			foreach ($orders as $i => $order) {
 
 				$total_price = ($product->get_price() - $order->get_total_discount(false));
 				$country = $order->get_billing_country();
 				$method = $order->get_payment_method();
+				$id = $order->get_id();
+				$order_notes = implode(", ", $id);
 				
-				$ht .= '<tr>
-					<td>' . $order->get_id() . '</td>
+				$ht .= '<tr data-row="' . $i . '">
+					<td><input type="checkbox" class="check-row" data-row="' . $i . '"></td>
+					<td>' . $id . '</td>
 					<td>' . $order->get_status() . '</td>
 					<td>' . date('d/m/Y', strtotime($order->get_date_created())) . '</td>
-					<td>' . $order->get_billing_email() . '</td>
+					<td class="email">' . $order->get_billing_email() . '</td>
 					<td>' . $order->get_billing_first_name() . ' ' . $order->get_billing_last_name() . '</td>
 					<td>' . $order->get_billing_address_1() . '</td>
 					<td>' . $order->get_billing_address_2() . '</td>
@@ -108,10 +112,10 @@ if ( ! class_exists( 'student_registers' ) ) {
 					<td>' . $order->get_billing_postcode() . '</td>
 					<td>' . $country . '</td>
 					<td>' . $product->get_sku(). '</td>
-					<td>' . $total_price . '</td>
+					<td class="total">' . $total_price . '</td>
 					<td>' . $this->get_stripe_fees($total_price, $country, $method) . '</td>
 					<td>' . $method . '</td>
-					<td>' . $order->get_customer_note() . '</td>
+					<td>' . $order_notes . '</td>
 
 				</tr>';
 			}
@@ -127,14 +131,18 @@ if ( ! class_exists( 'student_registers' ) ) {
 
 			$product = wc_get_product($pid);
 
+			if(!$product) return false;
+
 			$orders = [];
 			$orders_cancelled = [];
+
+			$this->print_orders_toolbar();
 			
 			foreach ($order_ids as $id) {
 
 				$order = wc_get_order( $id );
 
-				if( ($order->get_status() == "cancelled") || ($order->get_status() == "refund-requested")) {
+				if( ($order->get_status() == "cancelled") || ($order->get_status() == "failed")) {
 
 					array_push($orders_cancelled, $order);
 
@@ -142,7 +150,6 @@ if ( ! class_exists( 'student_registers' ) ) {
 				} else {
 
 					array_push($orders, $order);
-
 
 				}
 
@@ -152,13 +159,26 @@ if ( ! class_exists( 'student_registers' ) ) {
 
 			if(count($orders_cancelled)>0) {
 
-				$ht .= "<h4>Cancelled orders</h4>";
+				$ht .= '<h4 class="title-cancelled">Cancelled orders</h4>';
 				$ht .= $this->print_orders_table_html($orders_cancelled, $product);
 
 			}
 
 			echo $ht;
 
+		}
+
+		private function print_orders_toolbar() {
+
+			$ht = '
+			<div class="orders-table-toolbar">
+				<button class="copy-emails">Copy Selected Emails</button>
+				<input type="text" class="emails">
+				<label>Total <input type="text" class="grand-total"></label>
+				<label>Total - 19% VAT<input type="text" class="grand-total-minus-vat"></label>
+			</div>';
+
+			echo $ht;
 		}
 
 		private function get_stripe_fees($price, $country, $method) {
@@ -181,7 +201,7 @@ if ( ! class_exists( 'student_registers' ) ) {
 
 			$pid = $_GET["pid"];
 
-			$ht = '<label>Chose a product<br>
+			$ht = '<div class="product-select"><label>Chose a product<br>
 			<select id="product_dropdown" name="product_dropdown" onchange="document.location.href = \'?pid=\' + this.value" autocomplete="off">
 				<option> -- </option>';
 
@@ -194,7 +214,7 @@ if ( ! class_exists( 'student_registers' ) ) {
 			}
 
 
-			$ht .= '</select></label>';
+			$ht .= '</select></label></div>';
 
 			echo $ht;
 

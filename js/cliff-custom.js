@@ -93,8 +93,50 @@ $( "a[data-toggle=modal]" ).one( "click", function() {
 
 });
 
+$(".student-register-table input[type=checkbox]").prop("checked", false);
+orders_table_check_changes() 
+
+$(".student-register-table .all").click(function() {
+
+    $(this).parents(".student-register-table").find(".check-row").prop('checked', $(this).prop('checked'));
+    orders_table_check_changes();
+
 });
 
+$('.student-register-table .check-row').on("change", function(){
+    
+    orders_table_check_changes();
+
+});
+
+
+});
+
+function orders_table_check_changes() {
+
+    $(".orders-table-toolbar input[type=text]").val(0);
+
+    var total = 0;
+    var vatTotal = 0;
+    
+    $(".student-register-table tbody tr").each(function() {
+
+        if($(this).find(".check-row").prop("checked")) {
+
+            total += parseInt($(this).find(".total").text());
+
+        }
+
+        $(".orders-table-toolbar .grand-total").val(total);
+
+        if(total > 0) vatTotal = (total - ((19 / total) * 100 )).toFixed(2);
+
+        $(".orders-table-toolbar .grand-total-minus-vat").val(vatTotal);
+
+        //
+    }); 
+
+}
  
 })( jQuery );
 
