@@ -109,21 +109,31 @@ $('.student-register-table .check-row').on("change", function(){
 
 });
 
+$(".orders-table-toolbar .copy-emails").click(function() {
+
+    copy_text("orders_emails");
+
+}); 
+
 
 });
 
 function orders_table_check_changes() {
 
-    $(".orders-table-toolbar input[type=text]").val(0);
+    $(".orders-table-toolbar input[type=number]").val(0);
 
     var total = 0;
     var vatTotal = 0;
+    var emails = [];
+    var emailStr = "";
     
     $(".student-register-table tbody tr").each(function() {
 
         if($(this).find(".check-row").prop("checked")) {
 
             total += parseInt($(this).find(".total").text());
+
+            emails.push($(this).find(".email").text()); 
 
         }
 
@@ -133,10 +143,15 @@ function orders_table_check_changes() {
 
         $(".orders-table-toolbar .grand-total-minus-vat").val(vatTotal);
 
-        //
+        emailStr = emails.join("; ");
+
+        $(".orders-table-toolbar .emails").text(emailStr);
+
     }); 
 
 }
+
+
  
 })( jQuery );
 

@@ -173,9 +173,9 @@ if ( ! class_exists( 'student_registers' ) ) {
 			$ht = '
 			<div class="orders-table-toolbar">
 				<button class="copy-emails">Copy Selected Emails</button>
-				<input type="text" class="emails">
-				<label>Total <input type="text" class="grand-total"></label>
-				<label>Total - 19% VAT<input type="text" class="grand-total-minus-vat"></label>
+				<textarea class="emails" id="orders_emails"></textarea>
+				<label>Total <input type="number" class="grand-total"></label>
+				<label>Total - 19% VAT<input type="number" class="grand-total-minus-vat"></label>
 			</div>';
 
 			echo $ht;
