@@ -56,7 +56,7 @@ if ( ! class_exists( 'student_registers' ) ) {
 
 		}
 
-		private function get_all_woo($endpoint, $attributes = [], $pages = 20) {
+		private function get_all_woo($endpoint, $attributes = [], $pages = 10) {
 
 			$attr = array_merge($attributes, ['page' => 1]);
 
