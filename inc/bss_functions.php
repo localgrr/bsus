@@ -57,13 +57,11 @@ if ( ! class_exists( 'bss_functions' ) ) {
 
 		static function cliff_scripts() {
 
-			wp_enqueue_script( 'macy-script', '/wp-content/themes/understrap-child/js/third-party/macy.js/dist/macy.js', array(), false, 1, true);
+			wp_enqueue_script( 'ajaxchimp', get_stylesheet_directory_uri() . '/js/third-party/jquery.ajaxchimp/jquery.ajaxchimp.js', array()); 
 
-			wp_enqueue_script( 'ajaxchimp', '/wp-content/themes/understrap-child/js/third-party/jquery.ajaxchimp/jquery.ajaxchimp.js', array()); 
+			wp_enqueue_script( 'cliff-script', get_stylesheet_directory_uri() . '/js/cliff-custom.js', array(), false, 1, true);
 
-			wp_enqueue_script( 'cliff-script', '/wp-content/themes/understrap-child/js/cliff-custom.js', array(), false, 1, true);
-
-			wp_enqueue_style('cliff_css', '/wp-content/themes/understrap-child/css/main.css');
+			wp_enqueue_style('cliff_css', get_stylesheet_directory_uri() . '/css/main.css');
 
 		}
 
