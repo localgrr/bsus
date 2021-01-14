@@ -72,20 +72,6 @@ $(".navbar li.menu-subscribe, .navbar li.menu-enquire").find("a").attr(
 );
 
 $(document).ready(function() {
-if(document.getElementById("events_posts_array")) var macy = Macy({
-    container: '.active-only #events_posts_array',
-    trueOrder: false,
-    waitForImages: false,
-    margin: 24,
-    columns: 2,
-    breakAt: {
-        400: 1
-    },
-    margin: { 
-      x: 20,
-      y: 20  
-    }
-});
 
 $( "a[data-toggle=modal]" ).one( "click", function() {
 
