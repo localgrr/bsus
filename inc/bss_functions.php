@@ -57,11 +57,13 @@ if ( ! class_exists( 'bss_functions' ) ) {
 
 		static function cliff_scripts() {
 
+			wp_dequeue_style( "understrap-styles" );
+
 			wp_enqueue_script( 'ajaxchimp', get_stylesheet_directory_uri() . '/js/third-party/jquery.ajaxchimp/jquery.ajaxchimp.js', array()); 
 
 			wp_enqueue_script( 'cliff-script', get_stylesheet_directory_uri() . '/js/cliff-custom.js', array(), false, 1, true);
 
-			wp_enqueue_style('cliff_css', get_stylesheet_directory_uri() . '/css/main.css');
+			wp_enqueue_style('cliff_css', get_stylesheet_directory_uri() . '/css/theme.css');
 
 		}
 
