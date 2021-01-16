@@ -69,7 +69,7 @@ if ( ! class_exists( 'student_registers' ) ) {
 
 		private function print_orders_table_html($orders, $product) {
 
-			$ht = '<table class="student-register-table" width="100%" border="1" cellpadding="3">
+			$ht = '<table class="student-register-table table-responsive" width="100%" border="1" cellpadding="3">
 			<thead><tr>
 				<th class="narrow"><label><input type="checkbox" class="all"> All</label></th>
 				<th>Order ID</th>
