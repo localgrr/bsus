@@ -67,22 +67,17 @@ if ( ! class_exists( 'class_list' ) ) {
 
 							<a href="' . $url . '" title="More info">';
 
+							$ht .= 
 
-							if($cm["postponed"]) {
+							(($cm["postponed"]) ? '<strong>(Postponed)</strong> <del>' : '') .
 
-								$ht .= 'Postponed due to the pandamic, we will set new dates as soon as we can.';
+							(($repeat_dates != '') ? $repeat_dates : '') .
 
-							} else {
+							(isset($cm["event"]["date"]["start"]["time"]) ? (' ' . $cm["event"]["date"]["start"]["time"]) : '') .
 
-								$ht .= 
+							(isset($cm["event"]["date"]["end"]["time"]) ? (' to ' . $cm["event"]["date"]["end"]["time"]) : '') . 
 
-								(($repeat_dates != '') ? $repeat_dates : '') .
-
-								(isset($cm["event"]["date"]["start"]["time"]) ? (' ' . $cm["event"]["date"]["start"]["time"]) : '') .
-
-								(isset($cm["event"]["date"]["end"]["time"]) ? (' to ' . $cm["event"]["date"]["end"]["time"]) : '');
-
-							}
+							(($cm["postponed"]) ? '</del>' : '');
 
 							$ht .= 
 
