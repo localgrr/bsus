@@ -23,29 +23,41 @@ if ( ! class_exists( 'single_class' ) ) {
 			$ht = '';
 
 			foreach ($class->class_meta as $cm) {
-
-
 				
-				$ht .= '<div class="class-item"><div class="class-times"><h2>Class Times</h2><ul>';
+				$ht .= '<div class="class-item">';
 
-				foreach ($cm["event"]["date"]["repeat"]["human_arr"] as $class_time) {
+				if($cm["postponed"]) {
+
+					$ht .= '<p class="text-danger"><strong>Due to the pandemic, this class is postponed. New dates will be posted soon.
+					In the meantime you can still buy a ticket to secure your place</strong></p>';
 					
-					$ht .= '<li>' . $class_time . '</li>';
+				} else {
+				
+
+					$ht .= '<div class="class-times"><h2>Class Times</h2><ul>';
+
+					foreach ($cm["event"]["date"]["repeat"]["human_arr"] as $class_time) {
+						
+						$ht .= '<li>' . $class_time . '</li>';
+					}
+
+					$ht .= '</ul>';
+
+					$ht .= '</div>';
+
+
+
+					$class_show = get_field("class_show", $cm["event"]["id"]);
+
+					if($class_show) {
+
+						$ht .= '<div class="class-show"><h3>Class Show</h3>' . $class_show . '</div>';
+
+					}
+
+					$ht .= '<div class="location">' . $this->get_location($cm["event"]["id"]) . '</div>';
+
 				}
-
-				$ht .= '</ul>';
-
-				$ht .= '</div>';
-
-				$class_show = get_field("class_show", $cm["event"]["id"]);
-
-				if($class_show) {
-
-					$ht .= '<div class="class-show"><h3>Class Show</h3>' . $class_show . '</div>';
-
-				}
-
-				$ht .= '<div class="location">' . $this->get_location($cm["event"]["id"]) . '</div>';
 
 				$ht .= $this->get_buy_box($cm, $class);
 
@@ -64,7 +76,7 @@ if ( ! class_exists( 'single_class' ) ) {
 
 			$class_list = $this->class_list;
 
-			$ht .='<div class="bsus-buy">';
+			$ht ='<div class="bsus-buy">';
 
 			$ht .= $class_list->get_event_button($cm, $class, true);
 
@@ -99,6 +111,8 @@ if ( ! class_exists( 'single_class' ) ) {
 		}
 
 		function get_map_link($name, $address) {
+
+			if(!$address) return false;
 
 			return '<a target="_new" href="https://www.google.com/maps/search/?api=1&query=' . $name . ', ' . $address . '">map</a>';
 
