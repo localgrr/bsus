@@ -397,9 +397,8 @@ if ( ! class_exists( 'class_list' ) ) {
 
 			usort($posts_array, function($a, $b) {
 
-				if(!isset($a->class_meta[0]["event"]["date"]["start"]["date"])) return 1;
-
-				if(!isset($b->class_meta[0]["event"]["date"]["start"]["date"])) return 0;
+				if($a->non_event == true) return 1;
+				if($b->non_event == true) return 0;
 
 				if($a->past == true ) return 1;
 				if($b->past == true ) return 0;
