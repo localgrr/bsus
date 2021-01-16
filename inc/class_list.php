@@ -24,7 +24,7 @@ if ( ! class_exists( 'class_list' ) ) {
 
 		public function check_notices() {
 
-			if(isset($_GET["updated"])) if($_GET["updated"] == "true") echo $this->alert("You have been added to the waiting list", "info");
+			if(isset($_GET["updated"])) if($_GET["updated"] == "true") echo bss_functions::alert("You have been added to the waiting list", "info");
 
 		}
 
@@ -155,25 +155,6 @@ if ( ! class_exists( 'class_list' ) ) {
 			}
 
 			return implode(" ", $css_cats);
-		}
-
-		/**
-		 * Display a Bootstrap alert
-		 *
-		 *
-		 * @param string $text text to display inside the alert
-		 * @param string $type class identifier of bootstrap alert see:
-		 * https://getbootstrap.com/docs/4.0/components/alerts/
-		 * 
-		 * @return string
-		 */
-
-		public function alert($text, $type = "danger") {
-
-			return '<div class="alert alert-' . $type . '" role="alert">
-			  ' . $text . '
-			</div>';
-
 		}
 
 		/**

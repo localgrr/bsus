@@ -126,6 +126,25 @@ if ( ! class_exists( 'bss_functions' ) ) {
 
 		}
 
+		/**
+		 * Display a Bootstrap alert
+		 *
+		 *
+		 * @param string $text text to display inside the alert
+		 * @param string $type class identifier of bootstrap alert see:
+		 * https://getbootstrap.com/docs/4.0/components/alerts/
+		 * 
+		 * @return string
+		 */
+
+		static function alert($text, $type = "danger") {
+
+			return '<div class="alert alert-' . $type . '" role="alert">
+			  ' . $text . '
+			</div>';
+
+		}
+
 	}
 
 }
