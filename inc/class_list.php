@@ -400,11 +400,11 @@ if ( ! class_exists( 'class_list' ) ) {
 				if($a->non_event == true) return 1;
 				if($b->non_event == true) return 0;
 
-				if($a->postponed == true ) return 1;
-				if($b->postponed == true ) return 0;
-
 				if($a->past == true ) return 1;
 				if($b->past == true ) return 0;
+
+				if($a->postponed == true ) return 1;
+				if($b->postponed == true ) return 0;
 
 			    return($a->class_meta[0]["event"]["date"]["start"]["date"]->getTimestamp() - $b->class_meta[0]["event"]["date"]["start"]["date"]->getTimestamp());
 
