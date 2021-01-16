@@ -59,24 +59,40 @@ if ( ! class_exists( 'class_list' ) ) {
 
 						$repeat_dates = isset($cm["event"]["date"]["repeat"]["human"]) ? $cm["event"]["date"]["repeat"]["human"] : '';
 
-						$ht .= '<li class="class-meta-item"' . $hide . '><div class="row">'
+						$ht .= '
 
-						. '<div class="col-md-7">' 
+						<li class="class-meta-item"' . $hide . '><div class="row">
 
-						. '<a href="' . $url . '" title="More info">'
+							<div class="col-md-7">
 
-						. (($repeat_dates != '') ? $repeat_dates : '')
+							<a href="' . $url . '" title="More info">';
+
+
+							if($cm["postponed"]) {
+
+								$ht .= 'Postponed due to the pandamic, we will set new dates as soon as we can.';
+
+							} else {
+
+								$ht .= 
+
+								(($repeat_dates != '') ? $repeat_dates : '') .
+
+								(isset($cm["event"]["date"]["start"]["time"]) ? (' ' . $cm["event"]["date"]["start"]["time"]) : '') .
+
+								(isset($cm["event"]["date"]["end"]["time"]) ? (' to ' . $cm["event"]["date"]["end"]["time"]) : '');
+
+							}
+
+							$ht .= 
+
+							'</a></div><div class="col-md-5"><div class="product-info">'
+
+							. $this->get_event_button($cm, $class, true)
+
+							. '</div></div></div></li>';
+
 						
-
-						. (isset($cm["event"]["date"]["start"]["time"]) ? (' ' . $cm["event"]["date"]["start"]["time"]) : '')
-
-						. (isset($cm["event"]["date"]["end"]["time"]) ? (' to ' . $cm["event"]["date"]["end"]["time"]) : '')
-
-						. '</a></div><div class="col-md-5"><div class="product-info">'
-
-						. $this->get_event_button($cm, $class, true)
-
-						. '</div></div></div></li>';
 
 					}
 
@@ -311,47 +327,63 @@ if ( ! class_exists( 'class_list' ) ) {
 				$cm_events = [];
 				//non events EG script editing
 				$cm_non_events = [];
+				//potponed are active events that have no dates set 
+				//or even if they do ignore them
+				$cm_postponed_events = [];
 
 				//set up flags
 				$past = true;
 				$non_event = true;
+				$postponed = true;
 
 				foreach ($p->class_meta as $ii => $cm) {
 
-					if(isset($cm["event"]["date"]["start"]["date"])) {
-
-						if($cm["event"]["date"]["start"]["date"] <= $now) {
-
-							//event has passed
-							$cm["event"]["date"]["past"] = true;
-							array_push($cm_past_events, $cm);
-
-						} else {
-
-							array_push($cm_events, $cm);
-							$past = false;
-
-						}
-
+					if($cm["postponed"]) {
+						
+						array_push($cm_postponed_events, $cm);
 						$non_event = false;
-
+						$past = false;
 
 					} else {
 
-						//event has no date therefor is a "non-event"
-						array_push($cm_non_events, $cm);
+						if(isset($cm["event"]["date"]["start"]["date"])) {
+
+							if($cm["event"]["date"]["start"]["date"] <= $now) {
+
+								//event has passed
+								$cm["event"]["date"]["past"] = true;
+								array_push($cm_past_events, $cm);
+
+							} else {
+
+								array_push($cm_events, $cm);
+								$past = false;
+
+							}
+
+							$non_event = false;
+
+
+						} else {
+
+							//event has no date therefor is a "non-event"
+							array_push($cm_non_events, $cm);
+
+						}
 
 					}
 
 				}
 
-				//if all events in a class are past then mark the whole class as past
+				//if all events in a class meet a condition then mark the whole class as this condition
 
 				if($past) $p->past = true;
 
-				if($non_event || !isset($p->class_meta)) $p->non_event = true;
+				if($postponed) $p->postponed = true;
 
-				//Sort the future events by date
+				if($non_event) $p->non_event = true;
+
+				//Sort the events within a class by date
 
 				usort($cm_events, function($a, $b) {
 
@@ -361,12 +393,12 @@ if ( ! class_exists( 'class_list' ) ) {
 
 				//now tack on the past events and then the non events
 
-				$posts_array[$i]->class_meta = array_merge($cm_events, $cm_past_events, $cm_non_events); 
+				$posts_array[$i]->class_meta = array_merge($cm_events, $cm_postponed_events, $cm_past_events, $cm_non_events); 
 
 
 			}
 
-			//Final sorting, I honestly can't remember why
+			//Sorting of the classes in the list themselves
 
 			usort($posts_array, function($a, $b) {
 
@@ -376,6 +408,9 @@ if ( ! class_exists( 'class_list' ) ) {
 
 				if($a->past == true ) return 1;
 				if($b->past == true ) return 0;
+
+				if($a->postponed == true ) return 1;
+				if($b->postponed == true ) return 0;
 
 			    return($a->class_meta[0]["event"]["date"]["start"]["date"]->getTimestamp() - $b->class_meta[0]["event"]["date"]["start"]["date"]->getTimestamp());
 
@@ -412,6 +447,8 @@ if ( ! class_exists( 'class_list' ) ) {
 					$posts_array[$i]->class_meta[$ii]["product"] = $this->get_product($event["woo_product"], $p->ID);
 
 					$posts_array[$i]->class_meta[$ii]["event"] = $this->get_event($event["event"]);
+
+					$posts_array[$i]->class_meta[$ii]["postponed"] = $event["postponed"];
 
 				}
 
