@@ -98,6 +98,8 @@ if ( ! class_exists( 'student_registers' ) ) {
 	     */
 		private function print_orders_table() {
 
+			if(!$this->orders) return false;
+
 			$this->print_orders_toolbar();
 
 			$ht = $this->print_orders_table_html($this->orders["orders"]);
@@ -193,7 +195,7 @@ if ( ! class_exists( 'student_registers' ) ) {
 
 		    header('Content-Type: application/csv');
 		    // tell the browser we want to save it instead of displaying it
-		    header('Content-Disposition: attachment; filename="data.csv";');
+		    header('Content-Disposition: attachment; filename="' . $this->product->get_slug() . '";');
 
 		    exit;
 
@@ -354,7 +356,7 @@ if ( ! class_exists( 'student_registers' ) ) {
 
 		private function print_product_select($args = []) {
 
-			$pid = $this->product->get_id() ? $this->product->get_id() : null;
+			$pid = $this->product ? $this->product->get_id() : null;
 
 			$ht = '<div class="product-select"><label>Chose a product<br>
 			<select id="product_dropdown" name="product_dropdown" onchange="document.location.href = \'?pid=\' + this.value" autocomplete="off">
@@ -362,7 +364,7 @@ if ( ! class_exists( 'student_registers' ) ) {
 
 			foreach ($this->products_array as $pr) {
 
-				if($pid) $selected = ($pid == $pr->get_id()) ? ' selected="selected"' : '';
+				$selected = ($pid == $pr->get_id()) ? ' selected="selected"' : '';
 				
 				$ht .= '<option value="' . $pr->get_id() . '"' . $selected . '>' . $pr->get_name() . '</option>';
 
