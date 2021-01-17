@@ -38,6 +38,10 @@ if ( ! class_exists( 'student_registers' ) ) {
 
 		}
 
+		/**
+		 * Set arrays containing product and order info to use
+		 * throughout the class
+		 */
 		private function set_arrays() {
 
 			$pid = $this->get_product_id_from_qs();
@@ -83,6 +87,15 @@ if ( ! class_exists( 'student_registers' ) ) {
 
 		}
 
+	    /**
+	     * Output the HTML for the orders toolbar
+	     * and the orders table itself
+	     * 
+	     * @author Webnus <info@webnus.biz>
+	     * @param array $links
+	     * @param string $file
+	     * @return array
+	     */
 		private function print_orders_table() {
 
 			$this->print_orders_toolbar();
@@ -100,6 +113,11 @@ if ( ! class_exists( 'student_registers' ) ) {
 
 		}
 
+	    /**
+	     * Return an array of order IDs associated with a product ID
+		 *
+	     * @return array
+	     */
 		private function get_orders_ids_by_product_id() {
 
 			$product_id = $this->product->get_id();
@@ -120,6 +138,12 @@ if ( ! class_exists( 'student_registers' ) ) {
 		    return $results;
 		}
 
+	    /**
+	     * Get an object of Woocommerce products
+	     * currently published within the database
+	     *
+	     * @return array
+	     */
 		private function get_products() {
 
 			$query = new WC_Product_Query( array(
@@ -133,6 +157,11 @@ if ( ! class_exists( 'student_registers' ) ) {
 
 		}
 
+	    /**
+	     * Trigger the downloading of a CSV containing order data
+	     * when the Download CSV button is pressed
+	     *
+	     */
 		private function download_csv() {
 
 			ob_end_clean();
@@ -253,7 +282,7 @@ if ( ! class_exists( 'student_registers' ) ) {
 			$this->table_heading = $this->get_orders_table_heading();
 			$orders_data = $this->get_orders_table_data($orders);
 
-			$ht = '<table class="student-register-table table-responsive" width="100%" border="1" cellpadding="3">
+			$ht = '<table class="student-register-table table table-responsive" width="100%" border="1" cellpadding="3">
 			<thead><tr>';
 				foreach ($this->table_heading as $th) {
 					$class = isset($th[1]) ? ' class ="' . $th[1] . '"' : '';
