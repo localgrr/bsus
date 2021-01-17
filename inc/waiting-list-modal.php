@@ -15,7 +15,7 @@ function my_pre_save_post( $post_id ) {
 acf_form_head(); 
 
 
-if($_POST["waiting_list_form_submitted"] == true) {
+if(isset($_POST["waiting_list_form_submitted"])) if($_POST["waiting_list_form_submitted"] == true) {
 
   echo '
   <script>

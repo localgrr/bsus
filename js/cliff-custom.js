@@ -101,6 +101,11 @@ $(".orders-table-toolbar .copy-emails").click(function() {
 
 }); 
 
+$(".download-csv").click(function() {
+
+    $(".download-csv-form").submit();
+});
+
 
 });
 
