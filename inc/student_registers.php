@@ -317,8 +317,8 @@ if ( ! class_exists( 'student_registers' ) ) {
 
 			$ht = '
 			<div class="orders-table-toolbar">
-			<form method="post" action="" class="download-csv-form">
-				<button class="copy-emails">Copy Selected Emails</button>
+			<form method="post" action="" class="download-csv-form" novalidate>
+				<button type="button" class="copy-emails">Copy Selected Emails</button>
 				<textarea class="emails" id="orders_emails"></textarea>
 				<button class="download-csv">Download CSV</button>
 				<label>Total <input type="number" class="grand-total"></label>
