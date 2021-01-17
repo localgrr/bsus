@@ -91,10 +91,6 @@ if ( ! class_exists( 'student_registers' ) ) {
 	     * Output the HTML for the orders toolbar
 	     * and the orders table itself
 	     * 
-	     * @author Webnus <info@webnus.biz>
-	     * @param array $links
-	     * @param string $file
-	     * @return array
 	     */
 		private function print_orders_table() {
 
@@ -102,12 +98,12 @@ if ( ! class_exists( 'student_registers' ) ) {
 
 			$this->print_orders_toolbar();
 
-			$ht = $this->print_orders_table_html($this->orders["orders"]);
+			$ht = $this->print_orders_table_html();
 
 			if(count($this->orders["cancelled"])>0) {
 
 				$ht .= '<h4 class="title-cancelled">Cancelled orders</h4>';
-				$ht .= $this->print_orders_table_html($this->orders["cancelled"]);
+				$ht .= $this->print_orders_table_html(true);
 
 			}
 
@@ -201,6 +197,12 @@ if ( ! class_exists( 'student_registers' ) ) {
 
 		}
 
+	    /**
+	     * Add the orders data to the CSV file
+	     * 
+	     * @param $orders_data array containing the orders data
+	     * @param $output file temp file to write CSV data to
+	     */
 		private function output_csv_data_body($orders_data, $output) {
 
 			foreach ($orders_data as $od) {
@@ -219,6 +221,11 @@ if ( ! class_exists( 'student_registers' ) ) {
 
 		}
 
+	    /**
+	     * Return the array containing the orders table headings
+	     * 
+	     * @return array
+	     */
 		private function get_orders_table_heading() {
 
 			return [
@@ -242,6 +249,12 @@ if ( ! class_exists( 'student_registers' ) ) {
 
 		}
 
+	    /**
+	     * Take the array containing Woocommerce orders data
+	     * and convert it in to an array of simple values
+	     * 
+	     * @return array
+	     */
 		private function get_orders_table_data($orders) {
 
 			$product = $this->product;
@@ -279,10 +292,16 @@ if ( ! class_exists( 'student_registers' ) ) {
 			return $data;
 		}
 
-		private function print_orders_table_html($orders) {
+	    /**
+	     * Print the HTML for the orders table
+	     * 
+	     * @param $cancelled bool return the cancelled events or not
+	     * @return array
+	     */
+		private function print_orders_table_html($cancelled = false) {
 
 			$this->table_heading = $this->get_orders_table_heading();
-			$orders_data = $this->get_orders_table_data($orders);
+			$orders_data = ($cancelled) ? $this->orders["data_cancelled"] : $this->orders["data"];
 
 			$ht = '<table class="student-register-table table table-responsive" width="100%" border="1" cellpadding="3">
 			<thead><tr>';
@@ -314,7 +333,11 @@ if ( ! class_exists( 'student_registers' ) ) {
 		}
 
 
-
+	    /**
+	     * Output the HTML for the toolbar that gives extra functionality to
+	     * the otders form. Some of the functionality is within js/cliff-custom.js
+	     * 
+	     */
 		private function print_orders_toolbar() {
 
 			$ht = '
@@ -332,6 +355,16 @@ if ( ! class_exists( 'student_registers' ) ) {
 			echo $ht;
 		}
 
+	    /**
+	     * Calculate the stripe fees bases on the users country, total price
+	     * and the payment methon. A bit too static to be 100% reliable but seems
+	     * to work for all thein a few cases I tested it with
+	     * 
+	     * @param $price int total price of the transaction
+	     * @param $country string 2 letter country code
+	     * @param $method string patment method
+	     * @return int
+	     */
 		private function get_stripe_fees($price, $country, $method) {
 
 			if(strpos($method, "stripe") === false) return 0;
@@ -348,12 +381,22 @@ if ( ! class_exists( 'student_registers' ) ) {
 
 		}
 
+	    /**
+	     * check the querystring for "pid", product ID. Return it if it exists
+	     * or -1 if it doesn't
+	     * 
+	     * @return int
+	     */
 		private function get_product_id_from_qs() {
 
 			return isset($_GET["pid"]) ? $_GET["pid"] : -1;
 
 		}
 
+	    /**
+	     * Output HTML select that contains all the Woocommerce products
+	     * 
+	     */
 		private function print_product_select($args = []) {
 
 			$pid = $this->product ? $this->product->get_id() : null;
