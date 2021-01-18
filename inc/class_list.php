@@ -314,40 +314,31 @@ if ( ! class_exists( 'class_list' ) ) {
 
 				foreach ($p->class_meta as $ii => $cm) {
 
-/*					if($cm["postponed"]) {
-						
-						array_push($cm_postponed_events, $cm);
-						$non_event = false;
-						$past = false;
+					if(isset($cm["event"]["date"]["start"]["date"])) {
 
-					} else {*/
+						if($cm["event"]["date"]["start"]["date"] <= $now) {
 
-						if(isset($cm["event"]["date"]["start"]["date"])) {
-
-							if($cm["event"]["date"]["start"]["date"] <= $now) {
-
-								//event has passed
-								$cm["event"]["date"]["past"] = true;
-								array_push($cm_past_events, $cm);
-
-							} else {
-
-								array_push($cm_events, $cm);
-								$past = false;
-
-							}
-
-							$non_event = false;
-
+							//event has passed
+							$cm["event"]["date"]["past"] = true;
+							array_push($cm_past_events, $cm);
 
 						} else {
 
-							//event has no date therefor is a "non-event"
-							array_push($cm_non_events, $cm);
+							array_push($cm_events, $cm);
+							$past = false;
 
 						}
 
-/*					}*/
+						$non_event = false;
+
+
+					} else {
+
+						//event has no date therefor is a "non-event"
+						array_push($cm_non_events, $cm);
+
+					}
+
 
 				}
 
@@ -383,9 +374,6 @@ if ( ! class_exists( 'class_list' ) ) {
 
 				if($a->past == true ) return 1;
 				if($b->past == true ) return 0;
-/*
-				if($a->postponed == true ) return 1;
-				if($b->postponed == true ) return 0;*/
 
 			    return($a->class_meta[0]["event"]["date"]["start"]["date"]->getTimestamp() - $b->class_meta[0]["event"]["date"]["start"]["date"]->getTimestamp());
 
