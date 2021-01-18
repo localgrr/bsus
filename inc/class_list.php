@@ -231,7 +231,7 @@ if ( ! class_exists( 'class_list' ) ) {
 
 			$wl = new waiting_list();
 
-			if(isset($class_meta["event"]["date"]["past"])) if($class_meta["event"]["date"]["past"]) {
+			if(isset($class_meta["event"]["date"]["past"])) if($class_meta["event"]["date"]["past"] && !$class_meta["postponed"]) {
 
 				return $this->enquiry_button($class, 'Past event. Enquire about future classes', 'secondary');
 			}
@@ -314,13 +314,13 @@ if ( ! class_exists( 'class_list' ) ) {
 
 				foreach ($p->class_meta as $ii => $cm) {
 
-					if($cm["postponed"]) {
+/*					if($cm["postponed"]) {
 						
 						array_push($cm_postponed_events, $cm);
 						$non_event = false;
 						$past = false;
 
-					} else {
+					} else {*/
 
 						if(isset($cm["event"]["date"]["start"]["date"])) {
 
@@ -347,7 +347,7 @@ if ( ! class_exists( 'class_list' ) ) {
 
 						}
 
-					}
+/*					}*/
 
 				}
 
@@ -383,9 +383,9 @@ if ( ! class_exists( 'class_list' ) ) {
 
 				if($a->past == true ) return 1;
 				if($b->past == true ) return 0;
-
+/*
 				if($a->postponed == true ) return 1;
-				if($b->postponed == true ) return 0;
+				if($b->postponed == true ) return 0;*/
 
 			    return($a->class_meta[0]["event"]["date"]["start"]["date"]->getTimestamp() - $b->class_meta[0]["event"]["date"]["start"]["date"]->getTimestamp());
 
