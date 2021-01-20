@@ -514,6 +514,32 @@ D		 *
 		}
 
 		/**
+		 * Push date object and human readable date to the $arr_repeat array
+		 *
+		 * @param arr $array_repeat ID
+		 * @param date $start_date_obj
+		 * @param date $end_date_obj
+		 */
+		private function push_to_arr_repeat($arr_repeat, $start_date_obj, $end_date_obj) {
+
+			array_push($arr_repeat, [
+
+				'start' => [
+					'date' => clone $start_date_obj,
+					'human' => bss_functions::human_date($start_date_obj)
+				],
+				'end' => [
+					'date' => clone $end_date_obj,
+					'human' => bss_functions::human_date($end_date_obj)
+				]
+
+			]);
+
+			return $arr_repeat;
+
+		}
+
+		/**
 		 * Parse the repeating dates from the ME Calendar
 		 * https://webnus.net/modern-events-calendar/
 		 * Into useful formats
@@ -525,7 +551,7 @@ D		 *
 		 * @return arr
 		 */
 	
-		public function get_mec_repeat($id, $start_date, $end_date) {
+		private function get_mec_repeat($id, $start_date, $end_date) {
 
 			/* 
 			 * I found if I don't work with clones any date modify stuff actually affects the original date
@@ -548,18 +574,7 @@ D		 *
 
 					$end_date_obj = clone $ed->modify('+1 weeks');
 					
-					array_push($arr_repeat, [
-
-						'start' => [
-							'date' => $start_date_obj,
-							'human' => bss_functions::human_date($start_date_obj)
-						],
-						'end' => [
-							'date' => $end_date_obj,
-							'human' => bss_functions::human_date($end_date_obj)
-						]
-
-					]);
+					$arr_repeat = $this->push_to_arr_repeat($arr_repeat, $start_date_obj, $end_date_obj);
 
 				}
 
@@ -581,19 +596,7 @@ D		 *
 
 					$end_date_obj = DateTime::createFromFormat('Y-m-d h-i-A', $date_string_end, new DateTimeZone(static::TIMEZONE));
 
-					array_push($arr_repeat, [
-
-						'start' => [
-							'date' => $start_date_obj,
-							'human' => bss_functions::human_date($start_date_obj)
-						],
-
-						'end' => [
-							'date' => $end_date_obj,
-							'human' => bss_functions::human_date($end_date_obj)
-						]
-
-					]);
+					$arr_repeat = $this->push_to_arr_repeat($arr_repeat, $start_date_obj, $end_date_obj);
 					
 				}
 
@@ -625,18 +628,7 @@ D		 *
 					$start_date_obj = clone $sd_monday_this_week->modify($day_names[$day] . ' this week ' . $st);
 					$end_date_obj = clone $ed_monday_this_week->modify($day_names[$day] . ' this week ' . $et);
 
-					array_push($arr_repeat, [
-
-						'start' => [
-							'date' => $start_date_obj,
-							'human' => bss_functions::human_date($start_date_obj)
-						],
-						'end' => [
-							'date' => $end_date_obj,
-							'human' => bss_functions::human_date($end_date_obj)
-						]
-
-					]);
+					$arr_repeat = $this->push_to_arr_repeat($arr_repeat, $start_date_obj, $end_date_obj);
 
 				}
 
@@ -650,18 +642,7 @@ D		 *
 						$start_date_obj = clone $start_date_obj->modify($day_names[$day] . ' this week ' . $st);
 						$end_date_obj = clone $end_date_obj->modify($day_names[$day] . ' this week ' . $et);
 
-						array_push($arr_repeat, [
-
-							'start' => [
-								'date' => clone $start_date_obj,
-								'human' => bss_functions::human_date($start_date_obj)
-							],
-							'end' => [
-								'date' => clone $end_date_obj,
-								'human' => bss_functions::human_date($end_date_obj)
-							]
-
-						]);
+						$arr_repeat = $this->push_to_arr_repeat($arr_repeat, $start_date_obj, $end_date_obj);
 
 						$i++;
 
