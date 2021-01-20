@@ -122,7 +122,7 @@ if ( ! class_exists( 'bss_functions' ) ) {
 
 			$d = clone $date;
 
-			return  $d->format($format);
+			return $d->format($format);
 
 		}
 

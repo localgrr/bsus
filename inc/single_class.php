@@ -55,7 +55,8 @@ if ( ! class_exists( 'single_class' ) ) {
 
 					}
 
-					$ht .= '<div class="location">' . $this->get_location($cm["event"]["id"]) . '</div>';
+					$location = $this->get_location($cm["event"]["id"]);
+					if($location) $ht .= '<div class="location">' . $location . '</div>';
 
 				}
 

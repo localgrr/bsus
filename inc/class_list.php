@@ -142,8 +142,6 @@ if ( ! class_exists( 'class_list' ) ) {
 
 			$current_cat = wp_get_post_categories($class->ID, ['exclude'=>1]);
 
-			//pre_r($cats);
-
 			$css_cats = [];
 
 			foreach ($current_cat as $i => $cc) {	
@@ -529,8 +527,14 @@ D		 *
 	
 		public function get_mec_repeat($id, $start_date, $end_date) {
 
+			/* 
+			 * I found if I don't work with clones any date modify stuff actually affects the original date
+			*/
 			$sd = clone $start_date;
 			$ed = clone $end_date;
+
+			$st = $start_date->format("H:i");
+			$et = $end_date->format("H:i");
 
 			$repeat_json = get_post_meta( $id, "mec_repeat", true);
 
@@ -595,16 +599,90 @@ D		 *
 
 			}
 
+			if($repeat_json["type"] == "certain_weekdays") {
+
+				/*
+				 * this contains an array containing the days of the week
+				 * 1 being Monday and 7 being Sunday
+				*/
+				$weekdays = $repeat_json["certain_weekdays"];
+
+				$occurrences = $repeat_json["end_at_occurrences"];
+
+				/*
+				 * Get the very first week of dates for this event, then we can just +7 days for the rest
+				 * of the occurences. Not elegant I guess!
+				*/
+				$day_names = ["","monday","tuesday","wednesday","thursday","friday","saturday","sunday"];
+
+				$sd_monday_this_week = clone $sd->modify('monday this week');
+				$ed_monday_this_week = clone $ed->modify('monday this week');
+
+				foreach ($weekdays as $i => $day) {
+
+					if($i == 0) continue; //we dont want the very first date as these are repeats
+
+					$start_date_obj = clone $sd_monday_this_week->modify($day_names[$day] . ' this week ' . $st);
+					$end_date_obj = clone $ed_monday_this_week->modify($day_names[$day] . ' this week ' . $et);
+
+					array_push($arr_repeat, [
+
+						'start' => [
+							'date' => $start_date_obj,
+							'human' => bss_functions::human_date($start_date_obj)
+						],
+						'end' => [
+							'date' => $end_date_obj,
+							'human' => bss_functions::human_date($end_date_obj)
+						]
+
+					]);
+
+				}
+
+				for ($i=count($weekdays); $i < $occurrences; $i++) { 
+
+					$start_date_obj = clone $sd_monday_this_week->modify('monday this week +1 week' . $st);
+					$end_date_obj = clone $ed_monday_this_week->modify('monday this week + 1 week' . $et);
+
+					foreach ($weekdays as $day) {
+
+						$start_date_obj = clone $start_date_obj->modify($day_names[$day] . ' this week ' . $st);
+						$end_date_obj = clone $end_date_obj->modify($day_names[$day] . ' this week ' . $et);
+
+						array_push($arr_repeat, [
+
+							'start' => [
+								'date' => clone $start_date_obj,
+								'human' => bss_functions::human_date($start_date_obj)
+							],
+							'end' => [
+								'date' => clone $end_date_obj,
+								'human' => bss_functions::human_date($end_date_obj)
+							]
+
+						]);
+
+						$i++;
+
+					}
+
+				}
+
+
+
+			}
+
 			$short_date = "D M j";
 			$long_date = "l jS F @ H:i";
 
 			$str = bss_functions::human_date($start_date, $short_date);
 			$human_arr = [bss_functions::human_date($start_date, $long_date). " - " . bss_functions::human_date($end_date, "H:i") ]; 
 
-			foreach ($arr_repeat as $i => $r) {
+			foreach ($arr_repeat as $r) {
 				
 				$str .= ", " . bss_functions::human_date($r["start"]["date"], $short_date);
-				array_push($human_arr, bss_functions::human_date($r["start"]["date"], $long_date) . " - " . bss_functions::human_date($r["end"]["date"], "H:i") );
+				array_push($human_arr, (bss_functions::human_date($r["start"]["date"], $long_date) . " - " . bss_functions::human_date($r["end"]["date"], "H:i")) );
 
 			}
 
