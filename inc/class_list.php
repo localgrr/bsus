@@ -570,9 +570,9 @@ D		 *
 
 				for ($i=1; $i < $repeat_json["end_at_occurrences"] ; $i++) { 
 
-					$start_date_obj = clone $sd->modify('+1 weeks');
+					$start_date_obj = $sd->modify('+1 weeks');
 
-					$end_date_obj = clone $ed->modify('+1 weeks');
+					$end_date_obj = $ed->modify('+1 weeks');
 					
 					$arr_repeat = $this->push_to_arr_repeat($arr_repeat, $start_date_obj, $end_date_obj);
 
@@ -618,15 +618,15 @@ D		 *
 				*/
 				$day_names = ["","monday","tuesday","wednesday","thursday","friday","saturday","sunday"];
 
-				$sd_monday_this_week = clone $sd->modify('monday this week');
-				$ed_monday_this_week = clone $ed->modify('monday this week');
+				$sd_monday_this_week = $sd->modify('monday this week');
+				$ed_monday_this_week = $ed->modify('monday this week');
 
 				foreach ($weekdays as $i => $day) {
 
 					if($i == 0) continue; //we dont want the very first date as these are repeats
 
-					$start_date_obj = clone $sd_monday_this_week->modify($day_names[$day] . ' this week ' . $st);
-					$end_date_obj = clone $ed_monday_this_week->modify($day_names[$day] . ' this week ' . $et);
+					$start_date_obj = $sd_monday_this_week->modify($day_names[$day] . ' this week ' . $st);
+					$end_date_obj = $ed_monday_this_week->modify($day_names[$day] . ' this week ' . $et);
 
 					$arr_repeat = $this->push_to_arr_repeat($arr_repeat, $start_date_obj, $end_date_obj);
 
@@ -634,13 +634,13 @@ D		 *
 
 				for ($i=count($weekdays); $i < $occurrences; $i++) { 
 
-					$start_date_obj = clone $sd_monday_this_week->modify('monday this week +1 week' . $st);
-					$end_date_obj = clone $ed_monday_this_week->modify('monday this week + 1 week' . $et);
+					$start_date_obj = $sd_monday_this_week->modify('monday this week +1 week' . $st);
+					$end_date_obj = $ed_monday_this_week->modify('monday this week + 1 week' . $et);
 
 					foreach ($weekdays as $day) {
 
-						$start_date_obj = clone $start_date_obj->modify($day_names[$day] . ' this week ' . $st);
-						$end_date_obj = clone $end_date_obj->modify($day_names[$day] . ' this week ' . $et);
+						$start_date_obj = $start_date_obj->modify($day_names[$day] . ' this week ' . $st);
+						$end_date_obj = $end_date_obj->modify($day_names[$day] . ' this week ' . $et);
 
 						$arr_repeat = $this->push_to_arr_repeat($arr_repeat, $start_date_obj, $end_date_obj);
 
