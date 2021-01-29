@@ -441,7 +441,7 @@ if ( ! class_exists( 'class_list' ) ) {
 
 			];
 
-			$arr["nearly_sold_out"] = bss_functions::is_nearly_sold_out($arr, $product_id);
+			$arr["nearly_sold_out"] = bss_functions::is_nearly_sold_out($arr, $class_id);
 
 			$arr["waiting_list"] = waiting_list::get_waiting_list($product_id);
 
@@ -470,6 +470,31 @@ D		 *
 
 		}
 
+		private function get_special_days($arr, $id) {
+
+			$special_days = get_field("special_days", $id);
+
+			if(!$special_days) return $arr;
+
+			if(!isset($arr["start"]["date"])) return false;
+
+			foreach ($special_days as $special_day) {
+
+				if($special_day["date"] == $arr["start"]["date"]->format("Y-m-d")) {
+
+					$arr["start"]["special"] = $special_day;
+
+				}
+
+
+			}
+
+			pre_r($arr);
+
+			return $arr;
+
+		}
+
 
 		/**
 		 * Parse the dates from Modern Events calendar
@@ -481,7 +506,7 @@ D		 *
 		 * @return arr
 		 */
 
-		public function get_mec_date($id) {
+		private function get_mec_date($id) {
 
 			$date_json = get_post_meta( $id, "mec_date", true);
 
@@ -508,6 +533,8 @@ D		 *
 				],
 				'repeat' => $this->get_mec_repeat($id, $start_date, $end_date)
 			];
+
+			$arr["special"] = $this->get_special_days($arr, $id);
 
 			return $arr;
 
