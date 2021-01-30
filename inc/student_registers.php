@@ -284,12 +284,43 @@ if ( ! class_exists( 'student_registers' ) ) {
 					[$total_price, 'total'],
 					[$this->get_stripe_fees($total_price, $country, $method)],
 					[$method],
-					[$order->get_customer_note()]
+					[$this->get_customer_notes($id)]
 
 				]);
 			}
 
 			return $data;
+		}
+
+	    /**
+	     * Combine private and public customer notes, ignore system notes.
+	     * 
+	     * @param $id int Woocommerce order ID
+	     * @return str
+	     */
+		private function get_customer_notes($id) {
+
+			$notes = array_merge(wc_get_order_notes([
+				'order_id', $id,
+				'type' => 'internal',
+				'order__in' => [$id]]),
+			wc_get_order_notes([
+				'order_id', $id,
+				'type' => 'customer',
+				'order__in' => [$id]]));
+
+			$notes_arr = [];
+
+			foreach ($notes as $note) {
+
+				if($note->added_by == "system") continue;
+				
+				$notes_arr[] = $note->content;
+
+			}
+
+			return implode(", ", $notes_arr);
+
 		}
 
 	    /**
