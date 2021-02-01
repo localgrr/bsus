@@ -314,6 +314,10 @@ if ( ! class_exists( 'student_registers' ) ) {
 			foreach ($notes as $note) {
 
 				if($note->added_by == "system") continue;
+
+				if(strpos($note->content, "Order status")>-1) continue;
+
+				if(strpos($note->content, "Adjusted stock")>-1) continue;
 				
 				$notes_arr[] = $note->content;
 
