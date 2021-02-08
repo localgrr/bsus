@@ -32,7 +32,7 @@ do_action( 'woocommerce_email_header', $email_heading, $email ); ?>
 <p>If you chose to pay by Direct bank transfer please do so ASAP. You should have received the bank details as you checked out.</p>
 <p>Refunds can only be given up to 2 weeks before the class, this includes swapping to another class.
 This is explained in more detail in our refund policy
-<a href="https://berlinstandupschool.com/refund-policy" target="_new">>berlinstandupschool.com/refund-policy</a></p>
+<a href="https://berlinstandupschool.com/refund-policy" target="_new">berlinstandupschool.com/refund-policy</a></p>
 <p>Speak soon, and thanks for taking class with us! :-)</p>
 <?php
 
