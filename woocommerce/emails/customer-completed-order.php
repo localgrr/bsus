@@ -27,18 +27,13 @@ do_action( 'woocommerce_email_header', $email_heading, $email ); ?>
 <?php /* translators: %s: Customer first name */ ?>
 <p><?php printf( esc_html__( 'Hi %s,', 'woocommerce' ), esc_html( $order->get_billing_first_name() ) ); ?></p>
 <p><?php esc_html_e( 'We have finished processing your order.', 'woocommerce' ); ?></p>
-Thanks very much for your order, it is now being processed.
-<br>You should receive a welcome email from your instructor no less than a week before your first class.
-<br><br>
-A list of dates and times can be found on our website <a href="https://berlinstandupschool.com" target="_new">berlinstandupschool.com</a>
-<br><br>
-If you chose to pay by Direct bank transfer please do so ASAP. You should have received the bank details as you checked out.
-<br><br>
-Refunds can only be given up to 2 weeks before the class, this includes swapping to another class.
+<p>You should receive a welcome email from your instructor no less than a week before your first class.</p>
+<p>A list of dates and times can be found on our website <a href="https://berlinstandupschool.com" target="_new">berlinstandupschool.com</a></p>
+<p>If you chose to pay by Direct bank transfer please do so ASAP. You should have received the bank details as you checked out.</p>
+<p>Refunds can only be given up to 2 weeks before the class, this includes swapping to another class.
 This is explained in more detail in our refund policy
-<a href="https://berlinstandupschool.com/refund-policy" target="_new"></a>berlinstandupschool.com/refund-policy
-<br><br>
-Speak soon, and thanks again :-)
+<a href="https://berlinstandupschool.com/refund-policy" target="_new">>berlinstandupschool.com/refund-policy</a></p>
+<p>Speak soon, and thanks for taking class with us! :-)</p>
 <?php
 
 /*
