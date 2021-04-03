@@ -51,22 +51,24 @@ if ( ! class_exists( 'bss_functions' ) ) {
 
 			}
 
-			return $posts_new;
+			return $posts_new; 
 
 		}
 
 		static function cliff_scripts() {
 
-			wp_dequeue_style( "understrap-styles" );
+			wp_dequeue_style( "understrap-styles" );   
 
-			wp_enqueue_script( 'ajaxchimp', get_stylesheet_directory_uri() . '/js/third-party/jquery.ajaxchimp/jquery.ajaxchimp.js', array()); 
+			//wp_enqueue_script( 'ajaxchimp', get_stylesheet_directory_uri() . '/js/third-party/jquery.ajaxchimp/jquery.ajaxchimp.js', array()); 
+			wp_enqueue_script( 'jquery', get_stylesheet_directory_uri() . '/js/third-party/jquery-3.6.0.slim.min.js', array()); 
+			wp_enqueue_script( 'bootstrap', get_stylesheet_directory_uri() . '/js/third-party/bootstrap.min.js', array()); 
 
 			wp_enqueue_script( 'cliff-script', get_stylesheet_directory_uri() . '/js/cliff-custom.js', array());
 
 			wp_enqueue_style('cliff_css', get_stylesheet_directory_uri() . '/css/theme.css');
 
 		}
-
+ 
 		public function external_ticket_link() {
 
 			global $post;

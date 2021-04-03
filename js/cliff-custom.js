@@ -2,7 +2,7 @@
 
 (function ($) {
 
-$('#mailchimp-form').ajaxChimp({
+/*$('#mailchimp-form').ajaxChimp({
     url: 'https://berlinstandupschool.us7.list-manage.com/subscribe/post-json?u=ff2e27ffb240b1033b471eefc&id=98248e4f6e',
     callback: function(resp,x,y) {
         console.log(resp,x,y);
@@ -11,19 +11,11 @@ $('#mailchimp-form').ajaxChimp({
     error: function(x,y,z) {
         console.log("err",x,y,z)
     }
-});
+});*/
 
-var modalButtons = $("[data-target='#mailchimp-modal']");
 
-modalButtons.click(function() {
 
-    modalButtons.removeClass('interested');
-    $(this).addClass('interested');
-    interest = $(this).attr("data-interest");
-    $("input[name=interest-array]").removeAttr("checked");
-    $("input[value='" + interest + "']").attr("checked", true)
 
-});
 
 $("#any-course").change(function() {
     if($(this).attr("checked")) {
@@ -50,7 +42,7 @@ $('#mailchimp').submit(function(){
 
     $.ajax({
         url:mailchimpform.attr('action'),
-        type:'POST',
+        type:'POST', 
         data:mailchimpform.serialize(),
         success:function(data){
             $("#mailchimp-modal-messages").html('<span class="text-success">' + data + '</span>');
@@ -64,18 +56,31 @@ $('#mailchimp').submit(function(){
     return false;
 });
 
-$(".navbar li.menu-subscribe, .navbar li.menu-enquire").find("a").attr(
+
+$(document).ready(function() {
+
+    $(".navbar li.menu-subscribe, .navbar li.menu-enquire").find("a").attr(
     {
         "data-toggle": "modal",
         "data-target": $(this).attr("href")
     }
 );
 
-$(document).ready(function() {
-
 $( "a[data-toggle=modal]" ).one( "click", function() {
 
     $("#enquiry-modal input[name=subject]").val($(this).attr("data-subject"));
+
+});
+
+modalButtons = $("[href='#mailchimp-modal']");
+
+modalButtons.click(function() {
+
+    modalButtons.removeClass('interested');
+    $(this).addClass('interested');
+    interest = $(this).attr("data-interest");
+    $("input[name=interest-array]").removeAttr("checked");
+    $("input[value='" + interest + "']").attr("checked", true)
 
 });
 
