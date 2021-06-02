@@ -52,7 +52,18 @@ if ( ! class_exists( 'student_registers' ) ) {
 
 			if($this->product) {
 
-				$orders = $orders_cancelled = [];
+				$orders = $orders_cancelled = $wait_list = [];
+
+				$waiting_list = get_field("waiting_list", $pid);
+
+				if(isset($waiting_list)) {
+
+					foreach ($waiting_list as $w) {
+
+						array_push($wait_list, $w["email_address"]);
+
+					}
+				}
 
 				$order_ids = $this->get_orders_ids_by_product_id();
 				$product = $this->product;
@@ -83,6 +94,8 @@ if ( ! class_exists( 'student_registers' ) ) {
 
 				];
 
+				if($wait_list) $this->orders['wait_list'] = $wait_list;
+
 			}
 
 		}
@@ -105,6 +118,12 @@ if ( ! class_exists( 'student_registers' ) ) {
 				$ht .= '<h4 class="title-cancelled">Cancelled orders</h4>';
 				$ht .= $this->print_orders_table_html(true);
 
+			}
+
+			if(isset($this->orders["wait_list"])) {
+
+				$ht .= '<h4 class="title-cancelled">Waiting List</h4>';
+				$ht .= $this->print_wait_list_html();
 			}
 
 			echo $ht;
@@ -358,6 +377,47 @@ if ( ! class_exists( 'student_registers' ) ) {
 						$class = isset($dd[1]) ? ' class="' . $dd[1] . '"' : '';
 						$ht .= '<td' . $class . '>' . $dd[0] . '</td>';
 					}
+
+				$ht .='</tr>';
+			}
+
+			$ht .= '</tbody></table>';
+
+			return $ht;
+		}
+
+	    /**
+	     * Print the HTML for the waiting list
+	     * 
+	     * @param $cancelled bool return the cancelled events or not
+	     * @return array
+	     */
+		private function print_wait_list_html() {
+
+			$this->table_heading = [
+				['<label><input type="checkbox" class="all"> All</label>', 'narrow'],
+				['Email Address']
+			];
+
+			$orders_data = $this->orders["wait_list"];
+
+			$ht = '<table class="student-register-table table table-responsive" width="100%" border="1" cellpadding="3">
+			<thead><tr>';
+				foreach ($this->table_heading as $th) {
+					$class = isset($th[1]) ? ' class ="' . $th[1] . '"' : '';
+					$ht .= '<th' . $class . '>' . $th[0] . '</th>';
+				}
+			$ht .= '
+			</tr></thead>
+			<tbody>
+			';
+
+			foreach ($orders_data as $i => $d) {
+				
+				$ht .= '<tr data-row="' . $i . '">
+					<td><input type="checkbox" class="check-row" data-row="' . $i . '"></td>';
+
+					$ht .= '<td class="email">' . $d . '</td>';
 
 				$ht .='</tr>';
 			}
