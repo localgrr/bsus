@@ -56,7 +56,7 @@ if ( ! class_exists( 'student_registers' ) ) {
 
 				$waiting_list = get_field("waiting_list", $pid);
 
-				if(isset($waiting_list)) {
+				if($waiting_list) {
 
 					foreach ($waiting_list as $w) {
 
