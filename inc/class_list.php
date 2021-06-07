@@ -428,7 +428,7 @@ if ( ! class_exists( 'class_list' ) ) {
 		 */
 
 		public function get_product($product_id, $class_id) {
-			echo 99;  
+
 			if(!$product_id) return false;
 
 			$pf = new WC_Product_Factory(); 
@@ -491,7 +491,7 @@ D		 *
 
 			}
 
-			pre_r($arr);
+			//pre_r($arr);
 
 			return $arr;
 
