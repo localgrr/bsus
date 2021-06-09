@@ -229,14 +229,16 @@ if ( ! class_exists( 'class_list' ) ) {
 
 			$wl = new waiting_list();
 
+			$external = get_field('external_ticket_link', $class->ID);
+
+			$ht = '';
+
 			if(isset($class_meta["event"]["date"]["past"])) if($class_meta["event"]["date"]["past"] && !$class_meta["postponed"]) {
 
 				return $this->enquiry_button($class, 'Past event. Enquire about future classes', 'secondary');
 			}
 
 			if(isset($class_meta["product"]["product_id"])) {
-
-				$ht = '';
 
 				$url = '/cart/?add-to-cart=' . $class_meta["product"]["product_id"];
 
@@ -263,6 +265,11 @@ if ( ! class_exists( 'class_list' ) ) {
 				}
 
 			}	
+
+			if($external) {
+
+				$ht .= '<a class="btn btn-info" href="' . $external . '" target="_new">Buy from external provider</a>';
+			}
 
 			return $ht;
 		}
