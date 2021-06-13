@@ -92,10 +92,17 @@ $container = get_theme_mod( 'understrap_container_type' );
 
 <?php include "inc/enquiry-modal.php"; ?>
 
-<?php include "inc/waiting-list-modal.php"; ?>
+<?php include "inc/waiting-list-modal.php"; ?> 
 
 
 <?php wp_footer(); ?>
+
+<script src="https://www.google.com/recaptcha/api.js"></script>
+ <script>
+   function onSubmit(token) {
+     document.getElementById("enquiry_form").submit();
+   }
+ </script>
 
 
 
