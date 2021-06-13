@@ -22,6 +22,8 @@ $container = get_theme_mod( 'understrap_container_type' );
 	<link rel="pingback" href="<?php bloginfo( 'pingback_url' ); ?>">
 	<?php wp_head(); ?>
 <script data-ad-client="ca-pub-7278973225435224" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script src="https://www.google.com/recaptcha/api.js"></script>
+
 </head>
   
 <body <?php body_class(); ?>>
