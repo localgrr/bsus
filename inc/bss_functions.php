@@ -103,9 +103,9 @@ if ( ! class_exists( 'bss_functions' ) ) {
 
 		}
 
-		static function is_nearly_sold_out($em, $id) {
+		static function is_nearly_sold_out($em, $id, $pid) {
 
-			return ( (($em["stock_quantity"] <3) && ($em["stock_quantity"] > 0)) || get_field("nearly_sold_out", $id));
+			return ( (($em["stock_quantity"] <3) && ($em["stock_quantity"] > 0)) || get_field("nearly_sold_out", $id) || get_field("nearly_sold_out", $pid));
 		}
 
 		/**

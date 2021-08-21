@@ -450,7 +450,7 @@ if ( ! class_exists( 'class_list' ) ) {
 
 			];
 
-			$arr["nearly_sold_out"] = bss_functions::is_nearly_sold_out($arr, $class_id);
+			$arr["nearly_sold_out"] = bss_functions::is_nearly_sold_out($arr, $class_id, $product_id);
 
 			$arr["waiting_list"] = waiting_list::get_waiting_list($product_id);
 
