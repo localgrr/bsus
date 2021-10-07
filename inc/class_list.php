@@ -248,7 +248,7 @@ if ( ! class_exists( 'class_list' ) ) {
 
 				$buy_button .= '</a>';
 
-				if($class_meta["product"]["stock_quantity"] == 0) {
+				if($class_meta["product"]["stock_quantity"] <= 0) {
 
 					$ht .= $wl->waiting_list_button($class, $class_meta["product"]["product_id"]);
 
