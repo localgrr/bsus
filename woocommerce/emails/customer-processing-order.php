@@ -31,8 +31,7 @@ do_action( 'woocommerce_email_header', $email_heading, $email ); ?>
 <p>You should receive a welcome email from your instructor no less than a week before your first class.</p>
 <p>A list of dates and times can be found on our website <a href="https://berlinstandupschool.com" target="_new">berlinstandupschool.com</a></p>
 <p>If you chose to pay by Direct bank transfer please do so ASAP. You should have received the bank details as you checked out.</p>
-<p>Refunds can only be given up to 2 weeks before the class, this includes swapping to another class.
-This is explained in more detail in our refund policy
+<p>Please read our refund policy:<br>
 <a href="https://berlinstandupschool.com/refund-policy" target="_new">berlinstandupschool.com/refund-policy</a></p>
 <p>Speak soon, and thanks for taking class with us! :-)</p>
 
