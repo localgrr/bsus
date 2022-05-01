@@ -13,7 +13,7 @@
 
       <?php
 
-      echo do_shortcode('[contact-form-7 id="83" title=""]'); ?> 
+      echo do_shortcode('[contact-form-7 html_id="enquiry_form" id="83" title=""]'); ?> 
 
       </div>
     </div>

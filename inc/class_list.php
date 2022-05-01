@@ -24,7 +24,7 @@ if ( ! class_exists( 'class_list' ) ) {
 
 		public function check_notices() {
 
-			if($_GET["updated"] == "true") echo $this->alert("You have been added to the waiting list", "info");
+			if(isset($_GET["updated"])) if($_GET["updated"] == "true") echo bss_functions::alert("You have been added to the waiting list", "info");
 
 		}
 
@@ -59,24 +59,35 @@ if ( ! class_exists( 'class_list' ) ) {
 
 						$repeat_dates = isset($cm["event"]["date"]["repeat"]["human"]) ? $cm["event"]["date"]["repeat"]["human"] : '';
 
-						$ht .= '<li class="class-meta-item"' . $hide . '><div class="row">'
+						$ht .= '
 
-						. '<div class="col-md-7">' 
+						<li class="class-meta-item"' . $hide . '><div class="row">
 
-						. '<a href="' . $url . '" title="More info">'
+							<div class="col-md-7">
 
-						. (($repeat_dates != '') ? $repeat_dates : '')
+							<a href="' . $url . '" title="More info">';
+
+							$ht .= 
+
+							(($cm["postponed"]) ? '<strong>(Postponed)</strong> <del>' : '') .
+
+							(($repeat_dates != '') ? $repeat_dates : '') .
+
+							(isset($cm["event"]["date"]["start"]["time"]) ? (' ' . $cm["event"]["date"]["start"]["time"]) : '') .
+
+							(isset($cm["event"]["date"]["end"]["time"]) ? (' to ' . $cm["event"]["date"]["end"]["time"]) : '') . 
+
+							(($cm["postponed"]) ? '</del>' : '');
+
+							$ht .= 
+
+							'</a></div><div class="col-md-5"><div class="product-info">'
+
+							. $this->get_event_button($cm, $class, true)
+
+							. '</div></div></div></li>';
+
 						
-
-						. (isset($cm["event"]["date"]["start"]["time"]) ? (' ' . $cm["event"]["date"]["start"]["time"]) : '')
-
-						. (isset($cm["event"]["date"]["end"]["time"]) ? (' to ' . $cm["event"]["date"]["end"]["time"]) : '')
-
-						. '</a></div><div class="col-md-5"><div class="product-info">'
-
-						. $this->get_event_button($cm, $class, true)
-
-						. '</div></div></div></li>';
 
 					}
 
@@ -131,8 +142,6 @@ if ( ! class_exists( 'class_list' ) ) {
 
 			$current_cat = wp_get_post_categories($class->ID, ['exclude'=>1]);
 
-			//pre_r($cats);
-
 			$css_cats = [];
 
 			foreach ($current_cat as $i => $cc) {	
@@ -144,25 +153,6 @@ if ( ! class_exists( 'class_list' ) ) {
 			}
 
 			return implode(" ", $css_cats);
-		}
-
-		/**
-		 * Display a Bootstrap alert
-		 *
-		 *
-		 * @param string $text text to display inside the alert
-		 * @param string $type class identifier of bootstrap alert see:
-		 * https://getbootstrap.com/docs/4.0/components/alerts/
-		 * 
-		 * @return string
-		 */
-
-		public function alert($text, $type = "danger") {
-
-			return '<div class="alert alert-' . $type . '" role="alert">
-			  ' . $text . '
-			</div>';
-
 		}
 
 		/**
@@ -239,7 +229,11 @@ if ( ! class_exists( 'class_list' ) ) {
 
 			$wl = new waiting_list();
 
-			if($class_meta["event"]["date"]["past"]) {
+			$external = get_field('external_ticket_link', $class->ID);
+
+			$ht = '';
+
+			if(isset($class_meta["event"]["date"]["past"])) if($class_meta["event"]["date"]["past"] && !$class_meta["postponed"]) {
 
 				//return $this->enquiry_button($class, 'Past event. Enquire about future classes', 'secondary');
 
@@ -247,8 +241,6 @@ if ( ! class_exists( 'class_list' ) ) {
 			}  
 
 			if(isset($class_meta["product"]["product_id"])) {
-
-				$ht = '';
 
 				$url = '/cart/?add-to-cart=' . $class_meta["product"]["product_id"];
 
@@ -258,7 +250,7 @@ if ( ! class_exists( 'class_list' ) ) {
 
 				$buy_button .= '</a>';
 
-				if($class_meta["product"]["stock_quantity"] == 0) {
+				if($class_meta["product"]["stock_quantity"] <= 0) {
 
 					$ht .= $wl->waiting_list_button($class, $class_meta["product"]["product_id"]);
 
@@ -275,6 +267,11 @@ if ( ! class_exists( 'class_list' ) ) {
 				}
 
 			}	
+
+			if($external) {
+
+				$ht .= '<a class="btn btn-info" href="' . $external . '" target="_new">Buy from external provider</a>';
+			}
 
 			return $ht;
 		}
@@ -313,10 +310,14 @@ if ( ! class_exists( 'class_list' ) ) {
 				$cm_events = [];
 				//non events EG script editing
 				$cm_non_events = [];
+				//potponed are active events that have no dates set 
+				//or even if they do ignore them
+				$cm_postponed_events = [];
 
 				//set up flags
 				$past = true;
 				$non_event = true;
+				$postponed = true;
 
 				foreach ($p->class_meta as $ii => $cm) {
 
@@ -345,15 +346,18 @@ if ( ! class_exists( 'class_list' ) ) {
 
 					}
 
+
 				}
 
-				//if all events in a class are past then mark the whole class as past
+				//if all events in a class meet a condition then mark the whole class as this condition
 
 				if($past) $p->past = true;
 
-				if($non_event || !isset($p->class_meta)) $p->non_event = true;
+				if($postponed) $p->postponed = true;
 
-				//Sort the future events by date
+				if($non_event) $p->non_event = true;
+
+				//Sort the events within a class by date
 
 				usort($cm_events, function($a, $b) {
 
@@ -363,18 +367,17 @@ if ( ! class_exists( 'class_list' ) ) {
 
 				//now tack on the past events and then the non events
 
-				$posts_array[$i]->class_meta = array_merge($cm_events, $cm_past_events, $cm_non_events); 
+				$posts_array[$i]->class_meta = array_merge($cm_events, $cm_postponed_events, $cm_past_events, $cm_non_events); 
 
 
 			}
 
-			//Final sorting, I honestly can't remember why
+			//Sorting of the classes in the list themselves
 
 			usort($posts_array, function($a, $b) {
 
-				if(!isset($a->class_meta[0]["event"]["date"]["start"]["date"])) return 1;
-
-				if(!isset($b->class_meta[0]["event"]["date"]["start"]["date"])) return 0;
+				if($a->non_event == true) return 1;
+				if($b->non_event == true) return 0;
 
 				if($a->past == true ) return 1;
 				if($b->past == true ) return 0;
@@ -409,11 +412,13 @@ if ( ! class_exists( 'class_list' ) ) {
 
 				$posts_array[$i]->hide_class = $hide_class;
 
-				foreach ($class_events as $ii => $event) {
+				if($class_events) foreach ($class_events as $ii => $event) {
 
-					$posts_array[$i]->class_meta[$ii]["product"] = $this->get_product($p->ID, $event["woo_product"]);
+					$posts_array[$i]->class_meta[$ii]["product"] = $this->get_product($event["woo_product"], $p->ID);
 
 					$posts_array[$i]->class_meta[$ii]["event"] = $this->get_event($event["event"]);
+
+					$posts_array[$i]->class_meta[$ii]["postponed"] = $event["postponed"];
 
 				}
 
@@ -433,21 +438,23 @@ if ( ! class_exists( 'class_list' ) ) {
 
 		public function get_product($product_id, $class_id) {
 
+			if(!$product_id) return false;
+
 			$pf = new WC_Product_Factory(); 
 
-			$woo = $pf->get_product($class_id, $product_id);
+			$product = $pf->get_product( $product_id );
 
 			$arr = [
 
-				'product_id' => $woo->id,
-				'price' => $woo->price,
-				'stock_quantity' => $woo->stock_quantity
+				'product_id' => $product->get_id(),
+				'price' => $product->get_price(),
+				'stock_quantity' => $product->get_stock_quantity()
 
 			];
 
-			$arr["nearly_sold_out"] = bss_functions::is_nearly_sold_out($arr, $product_id);
+			$arr["nearly_sold_out"] = bss_functions::is_nearly_sold_out($arr, $class_id, $product_id);
 
-			$arr["waiting_list"] = waiting_list::get_waiting_list($woo->id);
+			$arr["waiting_list"] = waiting_list::get_waiting_list($product_id);
 
 
 			return $arr;
@@ -474,6 +481,31 @@ D		 *
 
 		}
 
+		private function get_special_days($arr, $id) {
+
+			$special_days = get_field("special_days", $id);
+
+			if(!$special_days) return $arr;
+
+			if(!isset($arr["start"]["date"])) return false;
+
+			foreach ($special_days as $special_day) {
+
+				if($special_day["date"] == $arr["start"]["date"]->format("Y-m-d")) {
+
+					$arr["start"]["special"] = $special_day;
+
+				}
+
+
+			}
+
+			//pre_r($arr);
+
+			return $arr;
+
+		}
+
 
 		/**
 		 * Parse the dates from Modern Events calendar
@@ -485,7 +517,7 @@ D		 *
 		 * @return arr
 		 */
 
-		public function get_mec_date($id) {
+		private function get_mec_date($id) {
 
 			$date_json = get_post_meta( $id, "mec_date", true);
 
@@ -513,7 +545,35 @@ D		 *
 				'repeat' => $this->get_mec_repeat($id, $start_date, $end_date)
 			];
 
+			$arr["special"] = $this->get_special_days($arr, $id);
+
 			return $arr;
+
+		}
+
+		/**
+		 * Push date object and human readable date to the $arr_repeat array
+		 *
+		 * @param arr $array_repeat ID
+		 * @param date $start_date_obj
+		 * @param date $end_date_obj
+		 */
+		private function push_to_arr_repeat($arr_repeat, $start_date_obj, $end_date_obj) {
+
+			array_push($arr_repeat, [
+
+				'start' => [
+					'date' => clone $start_date_obj,
+					'human' => bss_functions::human_date($start_date_obj)
+				],
+				'end' => [
+					'date' => clone $end_date_obj,
+					'human' => bss_functions::human_date($end_date_obj)
+				]
+
+			]);
+
+			return $arr_repeat;
 
 		}
 
@@ -529,10 +589,16 @@ D		 *
 		 * @return arr
 		 */
 	
-		public function get_mec_repeat($id, $start_date, $end_date) {
+		private function get_mec_repeat($id, $start_date, $end_date) {
 
+			/* 
+			 * I found if I don't work with clones any date modify stuff actually affects the original date
+			*/
 			$sd = clone $start_date;
 			$ed = clone $end_date;
+
+			$st = $start_date->format("H:i");
+			$et = $end_date->format("H:i");
 
 			$repeat_json = get_post_meta( $id, "mec_repeat", true);
 
@@ -542,22 +608,11 @@ D		 *
 
 				for ($i=1; $i < $repeat_json["end_at_occurrences"] ; $i++) { 
 
-					$start_date_obj = clone $sd->modify('+1 weeks');
+					$start_date_obj = $sd->modify('+1 weeks');
 
-					$end_date_obj = clone $ed->modify('+1 weeks');
+					$end_date_obj = $ed->modify('+1 weeks');
 					
-					array_push($arr_repeat, [
-
-						'start' => [
-							'date' => $start_date_obj,
-							'human' => bss_functions::human_date($start_date_obj)
-						],
-						'end' => [
-							'date' => $end_date_obj,
-							'human' => bss_functions::human_date($end_date_obj)
-						]
-
-					]);
+					$arr_repeat = $this->push_to_arr_repeat($arr_repeat, $start_date_obj, $end_date_obj);
 
 				}
 
@@ -579,21 +634,61 @@ D		 *
 
 					$end_date_obj = DateTime::createFromFormat('Y-m-d h-i-A', $date_string_end, new DateTimeZone(static::TIMEZONE));
 
-					array_push($arr_repeat, [
-
-						'start' => [
-							'date' => $start_date_obj,
-							'human' => bss_functions::human_date($start_date_obj)
-						],
-
-						'end' => [
-							'date' => $end_date_obj,
-							'human' => bss_functions::human_date($end_date_obj)
-						]
-
-					]);
+					$arr_repeat = $this->push_to_arr_repeat($arr_repeat, $start_date_obj, $end_date_obj);
 					
 				}
+
+			}
+
+			if($repeat_json["type"] == "certain_weekdays") {
+
+				/*
+				 * this contains an array containing the days of the week
+				 * 1 being Monday and 7 being Sunday
+				*/
+				$weekdays = $repeat_json["certain_weekdays"];
+
+				$occurrences = $repeat_json["end_at_occurrences"];
+
+				/*
+				 * Get the very first week of dates for this event, then we can just +7 days for the rest
+				 * of the occurences. Not elegant I guess!
+				*/
+				$day_names = ["","monday","tuesday","wednesday","thursday","friday","saturday","sunday"];
+
+				$sd_monday_this_week = $sd->modify('monday this week');
+				$ed_monday_this_week = $ed->modify('monday this week');
+
+				foreach ($weekdays as $i => $day) {
+
+					if($i == 0) continue; //we dont want the very first date as these are repeats
+
+					$start_date_obj = $sd_monday_this_week->modify($day_names[$day] . ' this week ' . $st);
+					$end_date_obj = $ed_monday_this_week->modify($day_names[$day] . ' this week ' . $et);
+
+					$arr_repeat = $this->push_to_arr_repeat($arr_repeat, $start_date_obj, $end_date_obj);
+
+				}
+
+				for ($i=count($weekdays); $i < $occurrences; $i++) { 
+
+					$start_date_obj = $sd_monday_this_week->modify('monday this week +1 week' . $st);
+					$end_date_obj = $ed_monday_this_week->modify('monday this week + 1 week' . $et);
+
+					foreach ($weekdays as $day) {
+
+						$start_date_obj = $start_date_obj->modify($day_names[$day] . ' this week ' . $st);
+						$end_date_obj = $end_date_obj->modify($day_names[$day] . ' this week ' . $et);
+
+						$arr_repeat = $this->push_to_arr_repeat($arr_repeat, $start_date_obj, $end_date_obj);
+
+						$i++;
+
+					}
+
+				}
+
+
 
 			}
 
@@ -603,10 +698,10 @@ D		 *
 			$str = bss_functions::human_date($start_date, $short_date);
 			$human_arr = [bss_functions::human_date($start_date, $long_date). " - " . bss_functions::human_date($end_date, "H:i") ]; 
 
-			foreach ($arr_repeat as $i => $r) {
+			foreach ($arr_repeat as $r) {
 				
 				$str .= ", " . bss_functions::human_date($r["start"]["date"], $short_date);
-				array_push($human_arr, bss_functions::human_date($r["start"]["date"], $long_date) . " - " . bss_functions::human_date($r["end"]["date"], "H:i") );
+				array_push($human_arr, (bss_functions::human_date($r["start"]["date"], $long_date) . " - " . bss_functions::human_date($r["end"]["date"], "H:i")) );
 
 			}
 

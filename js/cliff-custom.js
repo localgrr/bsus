@@ -2,7 +2,7 @@
 
 (function ($) {
 
-$('#mailchimp-form').ajaxChimp({
+/*$('#mailchimp-form').ajaxChimp({
     url: 'https://berlinstandupschool.us7.list-manage.com/subscribe/post-json?u=ff2e27ffb240b1033b471eefc&id=98248e4f6e',
     callback: function(resp,x,y) {
         console.log(resp,x,y);
@@ -11,19 +11,11 @@ $('#mailchimp-form').ajaxChimp({
     error: function(x,y,z) {
         console.log("err",x,y,z)
     }
-});
+});*/
 
-var modalButtons = $("[data-target='#mailchimp-modal']");
 
-modalButtons.click(function() {
 
-    modalButtons.removeClass('interested');
-    $(this).addClass('interested');
-    interest = $(this).attr("data-interest");
-    $("input[name=interest-array]").removeAttr("checked");
-    $("input[value='" + interest + "']").attr("checked", true)
 
-});
 
 $("#any-course").change(function() {
     if($(this).attr("checked")) {
@@ -50,7 +42,7 @@ $('#mailchimp').submit(function(){
 
     $.ajax({
         url:mailchimpform.attr('action'),
-        type:'POST',
+        type:'POST', 
         data:mailchimpform.serialize(),
         success:function(data){
             $("#mailchimp-modal-messages").html('<span class="text-success">' + data + '</span>');
@@ -64,28 +56,15 @@ $('#mailchimp').submit(function(){
     return false;
 });
 
-$(".navbar li.menu-subscribe, .navbar li.menu-enquire").find("a").attr(
+
+$(document).ready(function() {
+
+    $(".navbar li.menu-subscribe, .navbar li.menu-enquire").find("a").attr(
     {
         "data-toggle": "modal",
         "data-target": $(this).attr("href")
     }
 );
-
-$(document).ready(function() {
-if(document.getElementById("events_posts_array")) var macy = Macy({
-    container: '.active-only #events_posts_array',
-    trueOrder: false,
-    waitForImages: false,
-    margin: 24,
-    columns: 2,
-    breakAt: {
-        400: 1
-    },
-    margin: { 
-      x: 20,
-      y: 20  
-    }
-});
 
 $( "a[data-toggle=modal]" ).one( "click", function() {
 
@@ -93,7 +72,75 @@ $( "a[data-toggle=modal]" ).one( "click", function() {
 
 });
 
+modalButtons = $("[href='#mailchimp-modal']");
+
+modalButtons.click(function() {
+
+    modalButtons.removeClass('interested');
+    $(this).addClass('interested');
+    interest = $(this).attr("data-interest");
+    $("input[name=interest-array]").removeAttr("checked");
+    $("input[value='" + interest + "']").attr("checked", true)
+
 });
+
+$(".student-register-table input[type=checkbox]").prop("checked", false);
+orders_table_check_changes() 
+
+$(".student-register-table .all").click(function() {
+
+    $(this).parents(".student-register-table").find(".check-row").prop('checked', $(this).prop('checked'));
+    orders_table_check_changes();
+
+});
+
+$('.student-register-table .check-row').on("change", function(){
+    
+    orders_table_check_changes();
+
+});
+
+$(".orders-table-toolbar .copy-emails").click(function() {
+
+    copy_text("orders_emails");
+
+}); 
+
+});
+
+function orders_table_check_changes() {
+
+    $(".orders-table-toolbar input[type=number]").val(0);
+
+    var total = 0;
+    var vatTotal = 0;
+    var emails = [];
+    var emailStr = "";
+    
+    $(".student-register-table tbody tr").each(function() {
+
+        if($(this).find(".check-row").prop("checked")) {
+
+            total += parseInt($(this).find(".total").text());
+
+            emails.push($(this).find(".email").text()); 
+
+        }
+
+        $(".orders-table-toolbar .grand-total").val(total);
+
+        if(total > 0) vatTotal = (total - (total * 0.19)).toFixed(2);
+
+        $(".orders-table-toolbar .grand-total-minus-vat").val(vatTotal);
+
+        emailStr = emails.join("; ");
+
+        $(".orders-table-toolbar .emails").text(emailStr);
+
+    }); 
+
+}
+
 
  
 })( jQuery );

@@ -1,0 +1,46 @@
+ .student-register-table {
+ 	table-layout:fixed;
+
+ 	.wide {
+ 		width: 200px;
+ 	}
+ 	.narrow {
+ 		width: 75px;
+ 	}
+ 	.email {
+ 		font-size: small;
+ 		word-break: break-all;
+ 	}
+
+ }
+
+ .title-cancelled {
+ 	margin-top: 30px;
+ }
+
+ .product-select,
+ .orders-table-toolbar {
+
+ 	padding-bottom: 10px;
+
+ }
+
+ .orders-table-toolbar {
+
+ 	button, label {
+ 		margin-right: 20px;
+ 	}
+
+ 	label input {
+ 		margin-left: 5px;
+ 		width: 120px;
+ 	}
+
+ 	.emails {
+ 		position: absolute;
+ 		height: 1px;
+ 		left: -9999px;
+ 		width: 1px;
+ 		visibility: hidden;
+ 	}
+ }

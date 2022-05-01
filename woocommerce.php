@@ -49,24 +49,6 @@ if ( ! class_exists( 'bss_woo' ) ) {
 
         } 
 
-        static function woo_product_obj( $product_id ) {
-
-            $_pf = new WC_Product_Factory();  
-
-            $product = $_pf->get_product($product_id);
-
-            return $product;      
-
-        }
-
-        public function get_product_info( $product_id, $class = null ) {
-
-            $product = $this->woo_product_obj( $product_id );
-
-            return wc_get_template_html( 'woocommerce/single-product/add-to-cart/simple.php', array("product" => $product, "class" => $class) );
-
-        }
-
         static function wc_empty_cart_redirect_url() {
 
             return '/';

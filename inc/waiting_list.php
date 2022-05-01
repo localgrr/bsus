@@ -92,6 +92,8 @@ D		 *
 
 			$wl = get_field("waiting_list", $id);
 
+			if(!is_array($wl)) return false;
+
 			return (count($wl) == 0) ? false : $wl;
 
 		}
