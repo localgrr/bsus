@@ -241,8 +241,10 @@ if ( ! class_exists( 'class_list' ) ) {
 
 			if($class_meta["event"]["date"]["past"]) {
 
-				return $this->enquiry_button($class, 'Past event. Enquire about future classes', 'secondary');
-			}
+				//return $this->enquiry_button($class, 'Past event. Enquire about future classes', 'secondary');
+
+				return $wl->waiting_list_button($class, $class_meta["product"]["product_id"], "Join waiting list for the next class");
+			}  
 
 			if(isset($class_meta["product"]["product_id"])) {
 

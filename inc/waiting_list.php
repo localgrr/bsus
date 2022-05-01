@@ -66,11 +66,11 @@ D		 *
 			
 		}
 
-		public function waiting_list_button($class, $product_id) {
+		public function waiting_list_button($class, $product_id, $txt = 'Waiting list') {
 
 			return '
 			<form action="" method="post">
-				<input type="submit" class="btn btn-waiting btn-warning" value="Waiting list">
+				<input type="submit" class="btn btn-waiting btn-warning" value="' . $txt . '">
 				<input type="hidden" name="product_id" value="' . $product_id . '"/>
 				<input type="hidden" name="title" value="' . $class->post_title . '"/>
 				<input type="hidden" name="waiting_list_form_submitted" value="true"/>
